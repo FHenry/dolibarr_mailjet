@@ -1,0 +1,81 @@
+# <Mailjet connector>
+# Copyright (C) 2013 Florian Henry florian.henry@open-concept.pro
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Générique
+#
+
+# Module label 'ModuleXXXName'
+# (where XXX is value of numeric property 'numero' of module)
+Module123451Name = Mailjet
+# Module description 'ModuleXXXDesc'
+# (where XXX is value of numeric property 'numero' of module)
+Module123451Desc = Connecteur MailJet
+
+#
+# Page d'administration
+#
+MailJetSetup = Configuration du module MailJet
+Settings = Réglages
+MailJetSetupPage = Page de réglage de MailJet
+
+#
+# Page À propos
+#
+About = À propos
+MailJetAbout = À propos de MailJet
+MailJetAboutPage = Page à propos de MailJet
+
+#
+# Menu
+#
+MailJetSending=MailJet
+
+#
+# Admin
+#
+MailJetExplain=MailJet est un service gratuit d'envoie de mails.<BR> Pour plus d'information allez ici <a href="http://www.mailjet.com/" target="_blank">MailJet</a>.<BR>Pour voir vos identifiants : <a href="https://www.mailjet.com/account/setup" target="_blank">Mon compte MailJet</a>  
+MAILJET_MAIL_SMTP_SERVER=MailJet serveur SMTP 
+MAILJET_MAIL_SMTP_SERVERHelp=Vérifiez vos paramétre MailJet (SMTP server)
+MAILJET_SMTP_PORT=MailJet port serveur SMTP 
+MAILJET_SMTP_PORTHelp=Vérifiez vos paramétre MailJet (Port)
+MAILJET_MAIL_SMTPS_ID=MailJet Utilisateur (Clé API)
+MAILJET_MAIL_SMTPS_IDHelp=Vérifiez vos paramétre MailJet (Clé API)
+MAILJET_MAIL_SMTPS_PW=MailJet Mot de passe (Clé secrète)
+MAILJET_MAIL_SMTPS_PWHelp=Vérifiez vos paramétre MailJet (Clé secrète)
+MAILJET_MAIL_EMAIL_TLS=Utiliser TLS pour MailJet
+MAILJET_MAIL_EMAIL_TLSHelp=Vérifiez vos paramétre MailJet (TLS)
+MailJetActiveSending=Tout les eMails seront envoyé par MailJet
+MailJetSuccessSave=Configuration sauvegardée
+MailJetDolibarrSettings=La configuration actuel (<a href="%s">Configuration eMail</a>) sera sauvegardée lors de l'activation de cette option.<BR> Pour retrouvé cette configuration d'origine il vous suffit de désactiver le modue par ce boutton.
+MailJetDolibarrCheckSettings = Allez ici: <a href="%s">Configuration eMail</a> pour tester votre configuration
+
+#
+# Substitution
+#
+MailjetUnsubscribeEN = Lien de désincription Anglais
+MailjetUnsubscribeFR = Lien de désincription Français
+MailjeteMailto = e-Mail du destinataire
+
+#
+#MailJet Screen
+#
+MailJetCreateCampaign = Crée la campagne MailJet
+MailJetNoStdReplacement=Il semble que vous avez utilisé des remplacements Dolibarr standard (%s). Ceci ne fonctionne pas avec MailJet. Les seuls substitutions autorisées sont celles présentes sur l'écran d'édition.
+MailJetNoFileAttached=Les fichiers attachées ne sont pas autorisé dans les mails de campagne MailJet
+MailJetUnsubLinkMandatory=Le lien de désinscription est obligatoire pour les mailing MailJet
+MailJetCannotSendControlNotOK = Vous ne pourrez pas envoyé ce mail avec MailJet, car les/la condition(s) ci-dessus ne sont pas remplie(s).
+MailJetToSendByMailJetGoToMailJet=Pour envoyer ce mailing par une campagne MailJet, aller sur l'onglet MailJet. Sinon il partirons comme des emails MailJet transactionnels
