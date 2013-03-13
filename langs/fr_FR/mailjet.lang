@@ -58,24 +58,44 @@ MAILJET_MAIL_SMTPS_PW=MailJet Mot de passe (Clé secrète)
 MAILJET_MAIL_SMTPS_PWHelp=Vérifiez vos paramétre MailJet (Clé secrète)
 MAILJET_MAIL_EMAIL_TLS=Utiliser TLS pour MailJet
 MAILJET_MAIL_EMAIL_TLSHelp=Vérifiez vos paramétre MailJet (TLS)
+MAILJET_MAIL_EMAIL_FROM=EMail émetteur pour envoi emails automatiques
+MAILJET_MAIL_EMAIL_FROMHelp=Nous vérifirons que ce mail est validé par MailJet
 MailJetActiveSending=Tout les eMails seront envoyé par MailJet
 MailJetSuccessSave=Configuration sauvegardée
 MailJetDolibarrSettings=La configuration actuel (<a href="%s">Configuration eMail</a>) sera sauvegardée lors de l'activation de cette option.<BR> Pour retrouvé cette configuration d'origine il vous suffit de désactiver le modue par ce boutton.
 MailJetDolibarrCheckSettings = Allez ici: <a href="%s">Configuration eMail</a> pour tester votre configuration
+MailJetAPIKeyNotSet=Clé API est obligatoire
+MailJetSecretKeyNotSet=Clé secrète est obligatoire
 
 #
 # Substitution
 #
 MailjetUnsubscribeEN = Lien de désincription Anglais
 MailjetUnsubscribeFR = Lien de désincription Français
+MailjetUnsubscribeES = Lien de désincription Espagnole
+MailjetUnsubscribeDE = Lien de désincription Allemand
+MailjetUnsubscribeIT = Lien de désincription Italien
+MailjetUnsubscribeNL = Lien de désincription Néerlandais
 MailjeteMailto = e-Mail du destinataire
 
 #
 #MailJet Screen
 #
 MailJetCreateCampaign = Crée la campagne MailJet
+MailJetUpdateCampaign = Mettre à jour la campagne MailJet
 MailJetNoStdReplacement=Il semble que vous avez utilisé des remplacements Dolibarr standard (%s). Ceci ne fonctionne pas avec MailJet. Les seuls substitutions autorisées sont celles présentes sur l'écran d'édition.
 MailJetNoFileAttached=Les fichiers attachées ne sont pas autorisé dans les mails de campagne MailJet
 MailJetUnsubLinkMandatory=Le lien de désinscription est obligatoire pour les mailing MailJet
 MailJetCannotSendControlNotOK = Vous ne pourrez pas envoyé ce mail avec MailJet, car les/la condition(s) ci-dessus ne sont pas remplie(s).
 MailJetToSendByMailJetGoToMailJet=Pour envoyer ce mailing par une campagne MailJet, aller sur l'onglet MailJet. Sinon il partirons comme des emails MailJet transactionnels
+MailJetNotValidated=Votre campagne n'est pas encore validée
+MailJetCampaign=Campagne MailJet
+MailJetCampaignListContact=Liste de(s) contact(s) MailJet
+MailJetSenderName=Nom Prénom de l'envoyeur
+MailJetPermalink=Lien permanant
+MailJetPermalinkHelp=Affiche un lien vers un le site de MailJet pour visualisé correctement le mail si le lecteur à des problémes de visualisation sur son application de lecture de mail. 
+MailJetLang=Langue du mail
+MailJetSenderNameMandatory=Nom Prénom de l'envoyeur est obligatoire
+MailJetLangMandatory=Langue du mail est obligatoire
+MailJetSenderNameNotValid=L'eMail de l'émetteur n'est pas valider dans MailJet 
+MailJetSenderNameValid=L'eMail de l'émetteur est valider dans MailJet

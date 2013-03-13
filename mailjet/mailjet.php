@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-dol_include_once("/mailjet/class/php-mailjet.class-mailjet-0.1.php");
+dol_include_once('/mailjet/class/dolmailjet.class.php');
 
 // Load translation files required by the page
 $langs->load("mailjet@mailjet");
@@ -58,10 +58,17 @@ if (! $user->rights->mailing->creer || (empty($conf->global->EXTERNAL_USERS_ARE_
 
 $object=new Mailing($db);
 $result=$object->fetch($id);
+if ($result<0) {
+	setEventMessage($object->errors,'errors');
+}
+
+$mailjet= new DolMailjet($db);
+$result=$mailjet->fetch_by_mailing($id);
+if ($result<0) {
+	setEventMessage($mailjet->errors,'errors');
+}
 
 $extrafields = new ExtraFields($db);
-
-$mailjet = new Mailjet($conf->global->MAILJET_MAIL_SMTPS_ID,$conf->global->MAILJET_MAIL_SMTPS_PW);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -100,6 +107,17 @@ if (preg_match('/\[\[UNSUB_LINK_.*\]\]/',$object->body)==0) {
 	$error_no_unscubscribe_link=true;
 	$error_mailjet_control++;
 }
+//Sender is registered as valid sender into MailJet
+$warning_sender_not_valid=false;
+$result=$mailjet->checkMailSender($object->email_from);
+if ($result<0) {
+	setEventMessage($mailjet->errors,'errors');
+}else {
+	if (!$result) {
+		$warning_sender_not_valid=true;
+		$error_mailjet_control++;
+	}
+}
 
 
 /*
@@ -123,12 +141,15 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 	else if ($action == 'settitre' && empty($object->titre))		$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
 	else if ($action == 'setfrom' && empty($object->email_from))	$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
 
-	if (!empty($mesg))
+	if (empty($mesg))
 	{
 		if ($object->update($user) >= 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
+		}
+		else {
+			setEventMessage($object->errors,'errors');
 		}
 	}else {
 		setEventMessage($mesg,'errors');
@@ -138,17 +159,77 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 }
 
 
+if ($action=='setsendername') {
+	$mailjet->mailjet_sender_name  = GETPOST('sendername','alpha');
+	if (empty($mailjet->id)) {
+		$mailjet->fk_mailing=$object->id;
+		$result=$mailjet->create($user);
+	}else {
+		$result=$mailjet->update($user);
+	}
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}else {
+		$result=$mailjet->fetch_by_mailing($id);
+		if ($result<0) {
+			setEventMessage($mailjet->error,'errors');
+		}
+	}
+}
+
+if ($action=='setpermalink') {
+	$mailjet->mailjet_permalink  = GETPOST('permalink','alpha');
+	if (empty($mailjet->id)) {
+		$mailjet->fk_mailing=$object->id;
+		$result=$mailjet->create($user);
+	}else {
+		$result=$mailjet->update($user);
+	}
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}else {
+		$result=$mailjet->fetch_by_mailing($id);
+		if ($result<0) {
+			setEventMessage($mailjet->error,'errors');
+		}
+	}
+}
+
+if ($action=='setlang') {
+	$mailjet->mailjet_lang  = GETPOST('lang','alpha');
+	if (empty($mailjet->id)) {
+		$mailjet->fk_mailing=$object->id;
+		$result=$mailjet->create($user);
+	}else {
+		$result=$mailjet->update($user);
+	}
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}else {
+		$result=$mailjet->fetch_by_mailing($id);
+		if ($result<0) {
+			setEventMessage($mailjet->error,'errors');
+		}
+	}
+}
+
 if ($action == 'createmailjetcampaign') {
-	/*
-	 # Call
-	$response = $mailjet->messageList();
 	
-	# Result
-	$messages = $response->result;
+	$mailjet->currentmailing=$object;
 	
-	var_dump($messages);
-	*/
-	setEventMessage('toto','mesgs');
+	$result=$mailjet->createMailJetCampaign($user);
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}
+}
+
+if ($action=='updatemailjetcampaign') {
+	$mailjet->currentmailing=$object;
+	
+	$result=$mailjet->updateMailJetCampaign($user);
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}
 }
 
 
@@ -177,7 +258,6 @@ print '<table class="border" width="100%">';
 $linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
 
 
-
 print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object,'id', $linkback);
@@ -191,11 +271,6 @@ print '</td></tr>';
 // From
 print '<tr><td>'.$form->editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
 print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
-print '</td></tr>';
-
-// Errors to
-print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 print '</td></tr>';
 
 // Status
@@ -225,6 +300,58 @@ else
 	print $nbemail;
 }
 print '</td></tr>';
+
+// MailJet Sender Name
+print '<tr><td width="15%">';
+print $form->editfieldkey("MailJetSenderName",'sendername',$mailjet->mailjet_sender_name,$object,$user->rights->mailing->creer && $object->statut < 3 && empty($mailjet->mailjet_id),'string');
+print '</td><td colspan="3">';
+print $form->editfieldval("MailJetSenderName",'sendername',$mailjet->mailjet_sender_name,$object,$user->rights->mailing->creer && $object->statut < 3 && empty($mailjet->mailjet_id),'string');
+print '</td></tr>';
+
+// MailJet permalink
+print '<tr><td width="15%">';
+print $form->editfieldkey("MailJetPermalink",'permalink',$mailjet->mailjet_permalink,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;default:'.$langs->trans('Yes').',none:'.$langs->trans('No'));
+print '</td><td colspan="2">';
+print $form->editfieldval("MailJetPermalink",'permalink',$mailjet->mailjet_permalink,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;default:'.$langs->trans('Yes').',none:'.$langs->trans('No'));
+print '</td>';
+print '<td>';
+print $form->textwithpicto('',$langs->trans("MailJetPermalinkHelp"),1,'help');
+print '</td>';
+print '</tr>';
+
+// MailJet lang
+print '<tr><td width="15%">';
+print $form->editfieldkey("MailJetLang",'lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
+print '</td><td colspan="3">';
+print $form->editfieldval("MailJetLang",'lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
+print '</td>';
+print '</tr>';
+
+if (!empty($mailjet->mailjet_id)) {
+	// MailJet Campaign
+	print '<tr><td width="15%">';
+	print $langs->trans("MailJetCampaign");
+	print '</td><td colspan="3">';
+	if (!empty($mailjet->mailjet_id)) {
+		print '<a href="'.$mailjet->mailjet_url.'" target="_blank">MailJet</a>';
+	}
+	print '</td></tr>';
+	
+	// MailJet Campaign
+	print '<tr><td width="15%">';
+	print $langs->trans("MailJetCampaignListContact");
+	print '</td><td colspan="3">';
+	if (!empty($mailjet->mailjet_contact_list_id)) {
+		$contacts=$mailjet->listCampaignConcatsList('string');
+		if ($contacts<0) {
+			setEventMessage($mailjet->error,'errors');
+		}else {
+			print $contacts;
+		}
+	}
+	print '</td></tr>';
+}
+
 
 // Other attributes
 $parameters=array();
@@ -256,6 +383,22 @@ if ($error_no_unscubscribe_link) {
 	dol_htmloutput_mesg($langs->trans("MailJetUnsubLinkMandatory"),'','error',1);
 }
 
+if (empty($mailjet->mailjet_lang)) {
+	dol_htmloutput_mesg($langs->trans("MailJetLangMandatory"),'','error',1);
+	$error_mailjet_control++;
+}
+if (empty($mailjet->mailjet_sender_name)) {
+	dol_htmloutput_mesg($langs->trans("MailJetSenderNameMandatory"),'','error',1);
+	$error_mailjet_control++;
+}
+
+if ($object->statut == 0) {
+	dol_htmloutput_mesg($langs->trans("MailJetNotValidated").' : <a href="'.dol_buildpath('/comm/mailing/fiche.php',1).'?id='.$object->id.'">'.$langs->trans('Mailing').'</a>','','warning',1);
+}
+if ($warning_sender_not_valid) {
+	dol_htmloutput_mesg($langs->trans("MailJetSenderNameNotValid").' : <a href="http://www.mailjet.com/account/sender" target="_blank">MailJet</a>','','error',1);
+}
+
 print "\n\n<div class=\"tabsAction\">\n";
 if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
 {
@@ -270,10 +413,18 @@ if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $u
 	}
 	else
 	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createmailjetcampaign&amp;id='.$object->id.'">'.$langs->trans("MailJetCreateCampaign").'</a>';
+		if (empty($mailjet->mailjet_id)) {
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createmailjetcampaign&amp;id='.$object->id.'">'.$langs->trans("MailJetCreateCampaign").'</a>';
+		}else {
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=updatemailjetcampaign&amp;id='.$object->id.'">'.$langs->trans("MailJetUpdateCampaign").'</a>';
+		}
 	}
 }else {
 	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("MailJetCannotSendControlNotOK")).'">'.$langs->trans("MailJetCreateCampaign").'</a>';
+}
+
+if (!empty($object->email_from) && $warning_sender_not_valid){
+	
 }
 
 print '<br><br></div>';
@@ -294,9 +445,7 @@ print '</td>';
 print '</tr>';
 
 print '</table>';
-	print "<br>";
-
-
+print "<br>";
 
 
 // End of page

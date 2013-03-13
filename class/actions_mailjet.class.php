@@ -64,10 +64,18 @@ class ActionsMailjet
 		//Change substitution array
 		$object->substitutionarray = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
     								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
+									'[[UNSUB_LINK_DE]]' => 'MailjetUnsubscribeDE',
+									'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
+									'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
+									'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
 									'[[EMAIL_TO]]'=> 'MailjeteMailto');
 		
 		$object->substitutionarrayfortest = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
     								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
+									'[[UNSUB_LINK_DE]]' => 'MailjetUnsubscribeDE',
+									'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
+									'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
+									'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
 									'[[EMAIL_TO]]'=> 'MailjeteMailto');
 		
 		if ($action=='' || $action=='valid') {

@@ -83,7 +83,7 @@ class modMailjet extends DolibarrModules
 					'Normal Send mode',
 					0,
 					'current',
-					1
+					0
 				),
 				1=>array(
 					'MAILJET_SMTP_PORT_STD',
@@ -92,7 +92,7 @@ class modMailjet extends DolibarrModules
 					'Normal SMTP port',
 					0,
 					'current',
-					1			
+					0			
 				),
 				2=>array(
 					'MAILJET_MAIL_SMTP_SERVER_STD',
@@ -101,7 +101,7 @@ class modMailjet extends DolibarrModules
 					'Normal SMTP server',
 					0,
 					'current',
-					1
+					0
 				),
 				3=>array(
 					'MAILJET_MAIL_SMTPS_ID_STD',
@@ -110,7 +110,7 @@ class modMailjet extends DolibarrModules
 					'Normal SMTP identification credential id',
 					0,
 					'current',
-					1
+					0
 				),
 				4=>array(
 					'MAILJET_MAIL_SMTPS_PW_STD',
@@ -119,7 +119,7 @@ class modMailjet extends DolibarrModules
 					'Normal SMTP identification credential  password',
 					0,
 					'current',
-					1
+					0
 				),
 				5=>array(
 					'MAILJET_MAIL_EMAIL_TLS_STD',
@@ -128,7 +128,7 @@ class modMailjet extends DolibarrModules
 					'Normal SMTP server use of TSL(SSL)',
 					0,
 					'current',
-					1
+					0
 				),	
 				6=>array(
 					'MAILJET_MAIL_SENDMODE',
@@ -192,6 +192,24 @@ class modMailjet extends DolibarrModules
 					0,
 					'current',
 					1
+				),
+				13=>array(
+					'MAILJET_MAIL_EMAIL_FROM',
+					'chaine',
+					'',
+					'MailJet default senders',
+					0,
+					'current',
+					0
+				),
+				14=>array(
+				'MAILJET_MAIL_EMAIL_FROM_STD',
+				'chaine',
+				'',
+				'Normal default mail sender',
+				0,
+				'current',
+				0
 				)
 		);
 
@@ -232,7 +250,18 @@ class modMailjet extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		$sql = array();
+		global $conf;
+		
+		$sql = array(
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_SENDMODE.'\' WHERE name=\'MAILJET_MAIL_SENDMODE_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_SMTP_PORT.'\' WHERE name=\'MAILJET_SMTP_PORT_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_SMTP_SERVER.'\' WHERE name=\'MAILJET_MAIL_SMTP_SERVER_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_SMTPS_ID.'\' WHERE name=\'MAILJET_MAIL_SMTPS_ID_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_SMTPS_ID.'\' WHERE name=\'MAILJET_MAIL_SMTPS_ID_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_SMTPS_PW.'\' WHERE name=\'MAILJET_MAIL_SMTPS_PW_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_EMAIL_TLS.'\' WHERE name=\'MAILJET_MAIL_EMAIL_TLS_STD\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAIN_MAIL_EMAIL_FROM.'\' WHERE name=\'MAILJET_MAIL_EMAIL_FROM_STD\''
+		);
 
 		$result = $this->loadTables();
 
@@ -249,7 +278,18 @@ class modMailjet extends DolibarrModules
 	 */
 	public function remove($options = '')
 	{
-		$sql = array();
+		global $conf;
+		
+		$sql = array(
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_SENDMODE_STD.'\' WHERE name=\'MAIN_MAIL_SENDMODE\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_SMTP_PORT_STD.'\' WHERE name=\'MAIN_MAIL_SMTP_PORT\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_SMTP_SERVER_STD.'\' WHERE name=\'MAIN_MAIL_SMTP_SERVER\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_SMTPS_ID_STD.'\' WHERE name=\'MAIN_MAIL_SMTPS_ID\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_SMTPS_ID_STD.'\' WHERE name=\'MAIN_MAIL_SMTPS_ID\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_SMTPS_PW_STD.'\' WHERE name=\'MAIN_MAIL_SMTPS_PW\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_EMAIL_TLS_STD.'\' WHERE name=\'MAIN_MAIL_EMAIL_TLS\'',
+			'UPDATE '.MAIN_DB_PREFIX.'const SET value=\''.$conf->global->MAILJET_MAIL_EMAIL_FROM_STD.'\' WHERE name=\'MAIN_MAIL_EMAIL_FROM\''
+		);
 
 		return $this->_remove($sql, $options);
 	}

@@ -58,24 +58,44 @@ MAILJET_MAIL_SMTPS_PW=MailJet Secret Key
 MAILJET_MAIL_SMTPS_PWHelp=Check your MailJet account setting (Secret Key)
 MAILJET_MAIL_EMAIL_TLS=MailJet Use TLS
 MAILJET_MAIL_EMAIL_TLSHelp=Check your MailJet account setting (TLS)
+MAILJET_MAIL_EMAIL_FROM=Default mail sender
+MAILJET_MAIL_EMAIL_FROMHelp=We will check if this mail is registered as valid email dress for MailJet
 MailJetActiveSending=All e-mails will be send throught MailJet
 MailJetSuccessSave=Setup saved
 MailJetDolibarrSettings=The current mailing setting <a href="%s">Dolibarr eMail Setting</a> will be saved when this options is activated and will be replace by the MailJet values.<BR> If you want to retreive the original value just inactivate this switch. 
 MailJetDolibarrCheckSettings = Go to <a href="%s">Dolibarr eMail Setting</a> to test your configuration
+MailJetAPIKeyNotSet=API Key is required
+MailJetSecretKeyNotSet=Secret Key is required
 
 #
 # Substitution
 #
 MailjetUnsubscribeEN = Unsubscribe link English
 MailjetUnsubscribeFR = Unsubscribe link French
+MailjetUnsubscribeES = Unsubscribe link Spanish
+MailjetUnsubscribeDE = Unsubscribe link Deutch
+MailjetUnsubscribeIT = Unsubscribe link Italian
+MailjetUnsubscribeNL = Unsubscribe link Dutch
 MailjeteMailto = Mail destinarie
 
 #
 #MailJet Screen
 #
 MailJetCreateCampaign = Create MailJet campaign
+MailJetUpdateCampaign = Update MailJet campaign
 MailJetNoStdReplacement=It seems that you have use standard Dolibarr replacement string (%s). It will not work with MailJet. The only substitution available are the ones discribe in edit screen 
 MailJetNoFileAttached=Files attachements are not allowed in MailJet campaign mailling
 MailJetUnsubLinkMandatory=Unsubscribe link is mandatory for MailJet Mailing 
 MailJetCannotSendControlNotOK = You cannot send this mailing with MailJet, because requirement are not complete.
 MailJetToSendByMailJetGoToMailJet=To send this campaign by MailJet campaign, go to MailJet tab. Else they will be send as MailJet transactionnal eMail.
+MailJetNotValidated=Your emailing is not validated yet
+MailJetCampaign=MailJet campaign
+MailJetCampaignListContact=MailJet campaign contact list
+MailJetSenderName=Sender Name
+MailJetPermalink=PermaLink
+MailJetPermalinkHelp=Show a link to your mail througt Mailjet. Usefull if mail's reader are not able to read it correctly with their mail application
+MailJetLang=Mail language
+MailJetSenderNameMandatory=Sender Name is mandatory
+MailJetLangMandatory=Mail language is mandatory
+MailJetSenderNameNotValid=eMail From adress is not valid for MailJet account
+MailJetSenderNameValid=eMail is validated by MailJet to send mail

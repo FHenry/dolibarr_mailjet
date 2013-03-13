@@ -32,6 +32,7 @@ if (! $res) {
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once "../lib/mailjet.lib.php";
+dol_include_once('/mailjet/class/dolmailjet.class.php');
 
 // Translations
 $langs->load("mailjet@mailjet");
@@ -46,13 +47,14 @@ if (! $user->admin) {
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'int');
 
+$error=0;
+
 /*
  * Actions
  */
 
 if ($action == 'setvar')
-{	
-	
+{		
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_SMTP_SERVER', GETPOST('MAILJET_MAIL_SMTP_SERVER'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	
@@ -68,6 +70,9 @@ if ($action == 'setvar')
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_EMAIL_TLS', GETPOST('MAILJET_MAIL_EMAIL_TLS'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;	
 	
+	$res = dolibarr_set_const($db, 'MAILJET_MAIL_EMAIL_FROM', GETPOST('MAILJET_MAIL_EMAIL_FROM'),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	
 	if ($error) {
 		setEventMessage('Error','errors');
 	}else {
@@ -77,52 +82,70 @@ if ($action == 'setvar')
 
 if ($action=='mailjetactiv') {
 	
-	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', $value,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', $value,'chaine',0,'',0);
 	if (! $res > 0) $error++;
 	
 	if ($value==0) {
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", $conf->global->MAILJET_MAIL_SENDMODE_STD,'chaine',0,'',$conf->entity);
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", $conf->global->MAILJET_MAIL_SENDMODE_STD,'chaine',0,'',0);
 		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   $conf->global->MAILJET_SMTP_PORT_STD,'chaine',0,'',$conf->entity);
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   $conf->global->MAILJET_SMTP_PORT_STD,'chaine',0,'',0);
 		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", $conf->global->MAILJET_MAIL_SMTP_SERVER_STD,'chaine',0,'',$conf->entity);
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", $conf->global->MAILJET_MAIL_SMTP_SERVER_STD,'chaine',0,'',0);
 		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",    $conf->global->MAILJET_MAIL_SMTPS_ID_STD, 'chaine',0,'',$conf->entity);
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",    $conf->global->MAILJET_MAIL_SMTPS_ID_STD, 'chaine',0,'',0);
 		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",   $conf->global->MAILJET_MAIL_SMTPS_PW_STD, 'chaine',0,'',$conf->entity);
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",   $conf->global->MAILJET_MAIL_SMTPS_PW_STD, 'chaine',0,'',0);
 		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",   $conf->global->MAILJET_MAIL_EMAIL_TLS_STD,'chaine',0,'',$conf->entity);
+		$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",   $conf->global->MAILJET_MAIL_EMAIL_TLS_STD,'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",   $conf->global->MAILJET_MAIL_EMAIL_FROM_STD,'chaine',0,'',0);
 		if (! $res > 0) $error++;
 	}
 	if ($value==1) {
-		$res =dolibarr_set_const($db, "MAILJET_MAIL_SENDMODE_STD", $conf->global->MAIN_MAIL_SENDMODE,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAILJET_SMTP_PORT_STD",   $conf->global->MAIN_MAIL_SMTP_PORT,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAILJET_MAIL_SMTP_SERVER_STD", $conf->global->MAIN_MAIL_SMTP_SERVER,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAILJET_MAIL_SMTPS_ID_STD",    $conf->global->MAIN_MAIL_SMTPS_ID, 'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAILJET_MAIL_SMTPS_PW_STD",   $conf->global->MAIN_MAIL_SMTPS_PW, 'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAILJET_MAIL_EMAIL_TLS_STD",   $conf->global->MAIN_MAIL_EMAIL_TLS,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
 		
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", $conf->global->MAILJET_MAIL_SENDMODE,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   $conf->global->MAILJET_SMTP_PORT,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", $conf->global->MAILJET_MAIL_SMTP_SERVER,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",    $conf->global->MAILJET_MAIL_SMTPS_ID, 'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",   $conf->global->MAILJET_MAIL_SMTPS_PW, 'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-		$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",   $conf->global->MAILJET_MAIL_EMAIL_TLS,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
+		if (empty($conf->MAIN_MAIL_SMTPS_ID)) {
+			setEventMessage($langs->trans("MailJetAPIKeyNotSet"),'errors');
+			$error++;
+		}
+		if (empty($conf->global->MAILJET_MAIL_SMTPS_PW)){
+			setEventMessage($langs->trans("MailJetSecretKeyNotSet"),'errors');
+			$error++;
+		}
 		
-		$res =dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", 0,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
+		if (empty($error)) {
+			$res =dolibarr_set_const($db, "MAILJET_MAIL_SENDMODE_STD", $conf->global->MAIN_MAIL_SENDMODE,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAILJET_SMTP_PORT_STD",   $conf->global->MAIN_MAIL_SMTP_PORT,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAILJET_MAIL_SMTP_SERVER_STD", $conf->global->MAIN_MAIL_SMTP_SERVER,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAILJET_MAIL_SMTPS_ID_STD",    $conf->global->MAIN_MAIL_SMTPS_ID, 'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAILJET_MAIL_SMTPS_PW_STD",   $conf->global->MAIN_MAIL_SMTPS_PW, 'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAILJET_MAIL_EMAIL_TLS_STD",   $conf->global->MAIN_MAIL_EMAIL_TLS,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAILJET_MAIL_EMAIL_FROM_STD",   $conf->global->MAIN_MAIL_EMAIL_FROM,'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+			
+			$res =dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", $conf->global->MAILJET_MAIL_SENDMODE,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   $conf->global->MAILJET_SMTP_PORT,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", $conf->global->MAILJET_MAIL_SMTP_SERVER,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",    $conf->global->MAILJET_MAIL_SMTPS_ID, 'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",   $conf->global->MAILJET_MAIL_SMTPS_PW, 'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",   $conf->global->MAILJET_MAIL_EMAIL_TLS,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",   $conf->global->MAILJET_MAIL_EMAIL_FROM,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+			
+			$res =dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", 0,'chaine',0,'',0);
+			if (! $res > 0) $error++;
+		}
 	}
 	
 	if ($error) {
@@ -221,9 +244,36 @@ print $form->textwithpicto('',$langs->trans("MAILJET_MAIL_EMAIL_TLSHelp"),1,'hel
 print '</td>';
 print '</tr>';
 
+//MAILJET_MAIL_EMAIL_FROM
+print '<tr class="pair"><td>'.$langs->trans("MAILJET_MAIL_EMAIL_FROM").'</td>';
+print '<td align="left">';
+print '<input type="text" name="MAILJET_MAIL_EMAIL_FROM" value="'.$conf->global->MAILJET_MAIL_EMAIL_FROM.'" size="20" ></td>';
+print '<td align="left">';
+if (!empty($conf->global->MAILJET_MAIL_EMAIL_FROM)) {
+	if (!isValidEmail($conf->global->MAILJET_MAIL_EMAIL_FROM)) {
+		$langs->load("errors");
+		print img_warning($langs->trans("ErrorBadEMail",$conf->global->MAILJET_MAIL_EMAIL_FROM));
+	} else {
+		$mailjet= new DolMailjet($db);
+		$result=$mailjet->checkMailSender($conf->global->MAILJET_MAIL_EMAIL_FROM);
+		if ($result<0) {
+			setEventMessage($mailjet->errors,'errors');
+		}else {
+			if (!$result) {
+				print '<a href="http://www.mailjet.com/account/sender" target="_blank">'.img_warning($langs->transnoentities("MailJetSenderNameNotValid")).'</a>';
+			}else {
+				print img_picto_common($langs->transnoentities("MailJetSenderNameValid"), 'redstar');
+			}
+		}
+	}
+}
+else {
+	print $form->textwithpicto('',$langs->trans("MAILJET_MAIL_EMAIL_FROMHelp"),1,'help');
+}
+print '</td>';
+print '</tr>';
+
 print '<tr class="liste_titre"><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-
-
 
 print '</table>';
 print '</form>';
@@ -254,8 +304,10 @@ print '</table>';
 print '</form>';
 
 if (! empty($conf->global->MAILJET_ACTIVE)) {
-	dol_htmloutput_mesg($langs->trans("MailJetDolibarrCheckSettings",dol_buildpath('/admin/mails.php',1).'?mainmenu=home&leftmenu=setup'),'','ok',1);
+	dol_htmloutput_mesg($langs->trans("MailJetDolibarrCheckSettings",dol_buildpath('/admin/mails.php',1).'?mainmenu=home&leftmenu=setup'),'','ok',1);	
 }
+
+
 
 
 llxFooter();
