@@ -233,6 +233,37 @@ if ($action=='updatemailjetcampaign') {
 }
 
 
+if ($action=='sendmailjetcampaign') {
+	//Send campaign
+	$result=$mailjet->sendMailJetCampaign($user);
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}else {
+		//Update mailing general status
+		$object->statut=3;
+		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$object->statut." WHERE rowid=".$object->id;
+		dol_syslog("mailjet/mailjet/mailjet.php: update global status sql=".$sql, LOG_DEBUG);
+		$resql2=$db->query($sql);
+		if (! $resql2)	{
+			setEventMessage($db->lasterror(),'errors');
+		}
+		
+		//Update inforamtion from mailjet
+		$result=$mailjet->updateMailJetCampaignAttr($user);
+		if ($result<0) {
+			setEventMessage($mailjet->error,'errors');
+		}
+	}
+}
+
+if (action=='refreshstatus') {
+	//Update inforamtion from mailjet
+	$result=$mailjet->updateMailJetCampaignAttr($user);
+	if ($result<0) {
+		setEventMessage($mailjet->error,'errors');
+	}
+}
+
 /*
  * VIEW
  *
@@ -328,25 +359,48 @@ print '</td>';
 print '</tr>';
 
 if (!empty($mailjet->mailjet_id)) {
-	// MailJet Campaign
+	
+	//Status campaign mailjet
 	print '<tr><td width="15%">';
-	print $langs->trans("MailJetCampaign");
+	print $langs->trans("MailJetStatus");
 	print '</td><td colspan="3">';
 	if (!empty($mailjet->mailjet_id)) {
-		print '<a href="'.$mailjet->mailjet_url.'" target="_blank">MailJet</a>';
+		print $mailjet->getMailJetCampaignStatus();
 	}
 	print '</td></tr>';
 	
 	// MailJet Campaign
 	print '<tr><td width="15%">';
+	print $langs->trans("MailJetCampaign");
+	print '</td><td colspan="3">';
+	if ($mailjet->getMailJetCampaignStatus(0)==$langs->trans('MailJetdraft') || $mailjet->getMailJetCampaignStatus(0)==$langs->trans('MailJetprogrammed')) {
+		if (!empty($mailjet->mailjet_id)) {
+			print '<a href="'.$mailjet->mailjet_url.'" target="_blank">MailJet</a>';
+		}
+	}else {
+		print '<a href="http://www.mailjet.com'.$mailjet->mailjet_uri.'" target="_blank">MailJet Stats.</a>';
+	}
+	print '</td></tr>';
+	
+	// MailJet Contact
+	print '<tr><td width="15%">';
 	print $langs->trans("MailJetCampaignListContact");
 	print '</td><td colspan="3">';
 	if (!empty($mailjet->mailjet_contact_list_id)) {
-		$contacts=$mailjet->listCampaignConcatsList('string');
-		if ($contacts<0) {
-			setEventMessage($mailjet->error,'errors');
+		if ($mailjet->getMailJetCampaignStatus(0)==$langs->trans('MailJetdraft') || $mailjet->getMailJetCampaignStatus(0)==$langs->trans('MailJetprogrammed')) {
+			$contacts=$mailjet->listCampaignConcatsList('string');
+			if ($contacts<0) {
+				setEventMessage($mailjet->error,'errors');
+			}else {
+				print $contacts;
+			}
 		}else {
-			print $contacts;
+			$contacts=$mailjet->listCampaignConcatsListStatus('string');
+			if ($contacts<0) {
+				setEventMessage($mailjet->error,'errors');
+			}else {
+				print $contacts;
+			}
 		}
 	}
 	print '</td></tr>';
@@ -423,8 +477,22 @@ if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $u
 	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("MailJetCannotSendControlNotOK")).'">'.$langs->trans("MailJetCreateCampaign").'</a>';
 }
 
-if (!empty($object->email_from) && $warning_sender_not_valid){
-	
+if (!empty($mailjet->mailjet_id) && !$error_mailjet_control) {
+	if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider)
+	{
+		if ((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
+		{
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
+		}
+		else
+		{
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendmailjetcampaign&amp;id='.$object->id.'">'.$langs->trans("MailJetSendMailing").'</a>';
+		}
+	}
+}
+
+if (!empty($mailjet->mailjet_id) && !$error_mailjet_control && $object->statut == 3) {
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=refreshstatus&amp;id='.$object->id.'">'.$langs->trans("MailJetRefreshStatus").'</a>';
 }
 
 print '<br><br></div>';

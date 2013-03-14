@@ -68,7 +68,13 @@ class ActionsMailjet
 									'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
 									'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
 									'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
-									'[[EMAIL_TO]]'=> 'MailjeteMailto');
+									'[[EMAIL_TO]]'=> 'MailjeteMailto',
+									'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
+									'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
+									'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
+									'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin'
+		
+		);
 		
 		$object->substitutionarrayfortest = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
     								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
@@ -76,7 +82,11 @@ class ActionsMailjet
 									'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
 									'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
 									'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
-									'[[EMAIL_TO]]'=> 'MailjeteMailto');
+									'[[EMAIL_TO]]'=> 'MailjeteMailto',
+									'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
+									'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
+									'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
+									'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin');
 		
 		if ($action=='' || $action=='valid') {
 			$error_mailjet_control=0;

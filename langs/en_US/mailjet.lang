@@ -77,6 +77,26 @@ MailjetUnsubscribeDE = Unsubscribe link Deutch
 MailjetUnsubscribeIT = Unsubscribe link Italian
 MailjetUnsubscribeNL = Unsubscribe link Dutch
 MailjeteMailto = Mail destinarie
+MailJetURLFacebook=URL Facebook
+MailJetURLTwitter=URL Twitter
+MailJetURLGoogle=URL Google
+MailJetURLLinkedin=URL Linkedin
+
+#
+# Status
+#
+MailJetdraft=Draft
+MailJetprogrammed=Programmed
+MailJetsent=Sent
+MailJetarchived=Archived
+MailJetContactStatusqueued=Queued
+MailJetContactStatussent=Sent
+MailJetContactStatusopened=Opened
+MailJetContactStatusclicked=clicked
+MailJetContactStatusbounce=Bounce
+MailJetContactStatusblocked=Blocked
+MailJetContactStatusspam=Spam
+MailJetContactStatusunsub=Unsubscribe
 
 #
 #MailJet Screen
@@ -99,3 +119,6 @@ MailJetSenderNameMandatory=Sender Name is mandatory
 MailJetLangMandatory=Mail language is mandatory
 MailJetSenderNameNotValid=eMail From adress is not valid for MailJet account
 MailJetSenderNameValid=eMail is validated by MailJet to send mail
+MailJetSendMailing=Send MailJet Campaign
+MailJetStatus=MailJet Status
+MailJetRefreshStatus=Refresh Dolibarr with MailJet statistique

@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS llx_mailjet (
 	mailjet_sender_name varchar(50),
 	mailjet_permalink varchar(200),
 	mailjet_url varchar(300),
+	mailjet_uri varchar(300),
+	mailjet_stat_id integer,
 	mailjet_contact_list_id integer,
 	mailjet_lang varchar(10),
 	fk_user_author	integer	NOT NULL,

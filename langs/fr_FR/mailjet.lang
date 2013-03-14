@@ -28,7 +28,7 @@ Module123451Desc = Connecteur MailJet
 #
 # Page d'administration
 #
-MailJetSetup = Configuration du module MailJet
+MailJetSetup = Configuration du module MailJet 
 Settings = Réglages
 MailJetSetupPage = Page de réglage de MailJet
 
@@ -47,7 +47,7 @@ MailJetSending=MailJet
 #
 # Admin
 #
-MailJetExplain=MailJet est un service gratuit d'envoie de mails.<BR> Pour plus d'information allez ici <a href="http://www.mailjet.com/" target="_blank">MailJet</a>.<BR>Pour voir vos identifiants : <a href="https://www.mailjet.com/account/setup" target="_blank">Mon compte MailJet</a>  
+MailJetExplain=MailJet est un service gratuit d'envoie de mails <u><b>Internet Requis</b></u>.<BR> Pour plus d'information allez ici <a href="http://www.mailjet.com/" target="_blank">MailJet</a>.<BR>Pour voir vos identifiants : <a href="https://www.mailjet.com/account/setup" target="_blank">Mon compte MailJet</a>  
 MAILJET_MAIL_SMTP_SERVER=MailJet serveur SMTP 
 MAILJET_MAIL_SMTP_SERVERHelp=Vérifiez vos paramétre MailJet (SMTP server)
 MAILJET_SMTP_PORT=MailJet port serveur SMTP 
@@ -77,6 +77,26 @@ MailjetUnsubscribeDE = Lien de désincription Allemand
 MailjetUnsubscribeIT = Lien de désincription Italien
 MailjetUnsubscribeNL = Lien de désincription Néerlandais
 MailjeteMailto = e-Mail du destinataire
+MailJetURLFacebook=Lien Facebook
+MailJetURLTwitter=Lien Twitter
+MailJetURLGoogle=Lien Google
+MailJetURLLinkedin=Lien Linkedin
+
+#
+# Status
+#
+MailJetdraft=Brouillon
+MailJetprogrammed=Programé
+MailJetsent=Envoyé
+MailJetarchived=Archivé
+MailJetContactStatusqueued=En attente
+MailJetContactStatussent=Envoyés
+MailJetContactStatusopened=Ouverts
+MailJetContactStatusclicked=Cliqués
+MailJetContactStatusbounce=Erreur
+MailJetContactStatusblocked=Bloqués
+MailJetContactStatusspam=Spam
+MailJetContactStatusunsub=Désabonné
 
 #
 #MailJet Screen
@@ -99,3 +119,7 @@ MailJetSenderNameMandatory=Nom Prénom de l'envoyeur est obligatoire
 MailJetLangMandatory=Langue du mail est obligatoire
 MailJetSenderNameNotValid=L'eMail de l'émetteur n'est pas valider dans MailJet 
 MailJetSenderNameValid=L'eMail de l'émetteur est valider dans MailJet
+MailJetSendMailing=Envoyer la campagne par MailJet
+MailJetStatus=Status MailJet
+MailJetSocialNetworkLink=Reseaux sociaux
+MailJetRefreshStatus=Rafraichir Dolibarr avec les statistique de MailJet
