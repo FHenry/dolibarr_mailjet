@@ -8,3 +8,4 @@ English Dolibarr MailJet ChangeLog
 For all:
 	-Fix bug on admin page
 	-Remove Debug PHP in mailjet pages
+	-remove unsed index.php file
