@@ -7,3 +7,4 @@ English Dolibarr MailJet ChangeLog
 ***** ChangeLog for 1.1 compared to 1.0 *****
 For all:
 	-Fix bug on admin page
+	-Remove Debug PHP in mailjet pages
