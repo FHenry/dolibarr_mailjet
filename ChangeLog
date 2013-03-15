@@ -2,10 +2,14 @@
 English Dolibarr MailJet ChangeLog
 --------------------------------------------------------------
 
-
-
 ***** ChangeLog for 1.1 compared to 1.0 *****
 For all:
 	-Fix bug on admin page
 	-Remove Debug PHP in mailjet pages
 	-remove unsed index.php file
+	
+***** ChangeLog for 1.2 compared to 1.1 *****
+For all:
+	-Fix const entity problem
+For Dev
+	-Review code indentation

@@ -53,7 +53,9 @@ $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 
 // Access control
-if (! $user->rights->mailing->creer || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) accessforbidden();
+if (! $user->rights->mailing->creer || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->societe_id > 0)) { 
+	accessforbidden();
+}
 
 
 $object=new Mailing($db);
@@ -130,8 +132,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 // Action update description of emailing
-if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyto' || $action == 'setemail_errorsto')
-{
+if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyto' || $action == 'setemail_errorsto') {
 
 	if ($action == 'settitre')					$object->titre          = trim(GETPOST('titre','alpha'));
 	else if ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
@@ -141,17 +142,14 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 	else if ($action == 'settitre' && empty($object->titre))		$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
 	else if ($action == 'setfrom' && empty($object->email_from))	$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
 
-	if (empty($mesg))
-	{
-		if ($object->update($user) >= 0)
-		{
+	if (empty($mesg)) {
+		if ($object->update($user) >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessage($object->errors,'errors');
 		}
-	}else {
+	} else {
 		setEventMessage($mesg,'errors');
 	}
 
@@ -238,7 +236,7 @@ if ($action=='sendmailjetcampaign') {
 	$result=$mailjet->sendMailJetCampaign($user);
 	if ($result<0) {
 		setEventMessage($mailjet->error,'errors');
-	}else {
+	} else {
 		//Update mailing general status
 		$object->statut=3;
 		$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$object->statut." WHERE rowid=".$object->id;
@@ -279,15 +277,11 @@ $head = emailing_prepare_head($object);
 
 dol_fiche_head($head, 'tabMailJetSending', $langs->trans("MailJet"), 0, 'email');
 
-
 $form = new Form($db);
-
-
 
 print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/liste.php">'.$langs->trans("BackToList").'</a>';
-
 
 print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
@@ -314,20 +308,14 @@ print '</td><td colspan="3">';
 $nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
 if ($object->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 {
-	if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
-	{
+	if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)	{
 		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
 		print $form->textwithpicto($nbemail,$text,1,'warning');
-	}
-	else
-	{
+	} else {
 		$text=$langs->trans('NotEnoughPermissions');
 		print $form->textwithpicto($nbemail,$text,1,'warning');
 	}
-
-}
-else
-{
+} else {
 	print $nbemail;
 }
 print '</td></tr>';
@@ -410,10 +398,8 @@ if (!empty($mailjet->mailjet_id)) {
 // Other attributes
 $parameters=array();
 $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook) && ! empty($extrafields->attribute_label))
-{
-	foreach($extrafields->attribute_label as $key=>$label)
-	{
+if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	foreach($extrafields->attribute_label as $key=>$label) {
 		$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
 		print '<tr><td';
 		if (! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
@@ -436,7 +422,6 @@ if ($error_file_attach) {
 if ($error_no_unscubscribe_link) {
 	dol_htmloutput_mesg($langs->trans("MailJetUnsubLinkMandatory"),'','error',1);
 }
-
 if (empty($mailjet->mailjet_lang)) {
 	dol_htmloutput_mesg($langs->trans("MailJetLangMandatory"),'','error',1);
 	$error_mailjet_control++;
@@ -445,7 +430,6 @@ if (empty($mailjet->mailjet_sender_name)) {
 	dol_htmloutput_mesg($langs->trans("MailJetSenderNameMandatory"),'','error',1);
 	$error_mailjet_control++;
 }
-
 if ($object->statut == 0) {
 	dol_htmloutput_mesg($langs->trans("MailJetNotValidated").' : <a href="'.dol_buildpath('/comm/mailing/fiche.php',1).'?id='.$object->id.'">'.$langs->trans('Mailing').'</a>','','warning',1);
 }
@@ -454,19 +438,14 @@ if ($warning_sender_not_valid) {
 }
 
 print "\n\n<div class=\"tabsAction\">\n";
-if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer)
-{
+if (($object->statut == 0 || $object->statut == 1) && $user->rights->mailing->creer) {
 	print '<a class="butAction" href="'.dol_buildpath('/comm/mailing/fiche.php',1).'?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditMailing").'</a>';
 }
 
-if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider && !$error_mailjet_control)
-{
-	if ((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
-	{
+if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider && !$error_mailjet_control) {
+	if ((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)) {
 		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("MailJetCreateCampaign").'</a>';
-	}
-	else
-	{
+	} else {
 		if (empty($mailjet->mailjet_id)) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createmailjetcampaign&amp;id='.$object->id.'">'.$langs->trans("MailJetCreateCampaign").'</a>';
 		}else {
@@ -478,14 +457,10 @@ if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $u
 }
 
 if (!empty($mailjet->mailjet_id) && !$error_mailjet_control) {
-	if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider)
-	{
-		if ((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
-		{
+	if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider) {
+		if ((! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)) {
 			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendmailjetcampaign&amp;id='.$object->id.'">'.$langs->trans("MailJetSendMailing").'</a>';
 		}
 	}
@@ -514,7 +489,6 @@ print '</tr>';
 
 print '</table>';
 print "<br>";
-
 
 // End of page
 llxFooter();

@@ -58,15 +58,12 @@ class DolMailjet extends CommonObject
 	var $mailjet;
 
 
-
-
 	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDb		$db      Database handler
 	 */
-	function __construct($db)
-	{
+	function __construct($db) {
 		$this->db = $db;
 		return 1;
 	}
@@ -80,8 +77,7 @@ class DolMailjet extends CommonObject
 		 
 		global $conf,$langs;
 		 
-		if (! is_object($this->mailjet))
-		{
+		if (! is_object($this->mailjet)) {
 			if (empty($conf->global->MAILJET_MAIL_SMTPS_ID)) {
 				$langs->load("mailjet@mailjet");
 				$this->error=$langs->trans("MailJetAPIKeyNotSet");
@@ -117,8 +113,7 @@ class DolMailjet extends CommonObject
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
 	 *  @return int      		   	 <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger=0)
-	{
+	function create($user, $notrigger=0) {
 		global $conf, $langs;
 		$error=0;
 
@@ -181,12 +176,10 @@ class DolMailjet extends CommonObject
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
-		{
+		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailjet");
 
-			if (! $notrigger)
-			{
+			if (! $notrigger)	{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -200,18 +193,14 @@ class DolMailjet extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
+		if ($error)	{
+			foreach($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
+		}else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -224,8 +213,7 @@ class DolMailjet extends CommonObject
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-	function fetch($id)
-	{
+	function fetch($id) {
 		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -251,10 +239,8 @@ class DolMailjet extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql)	{
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
@@ -274,14 +260,11 @@ class DolMailjet extends CommonObject
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->tms = $this->db->jdate($obj->tms);
 
-
 			}
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error="Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -294,8 +277,7 @@ class DolMailjet extends CommonObject
 	 *  @param	int		$id    Id of mailing
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
-	function fetch_by_mailing($id)
-	{
+	function fetch_by_mailing($id) {
 		global $langs;
 		 
 		$sql = "SELECT";
@@ -322,10 +304,8 @@ class DolMailjet extends CommonObject
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql)	{
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id    = $obj->rowid;
@@ -350,9 +330,7 @@ class DolMailjet extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error="Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -367,8 +345,7 @@ class DolMailjet extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
-	{
+	function update($user=0, $notrigger=0) {
 		global $conf, $langs;
 		$error=0;
 
@@ -383,11 +360,6 @@ class DolMailjet extends CommonObject
 		if (isset($this->mailjet_lang)) $this->fk_user_mod=trim($this->mailjet_lang);
 		if (isset($this->mailjet_sender_name)) $this->fk_user_mod=trim($this->mailjet_sender_name);
 		if (isset($this->mailjet_permalink)) $this->fk_user_mod=trim($this->mailjet_permalink);
-
-
-
-		// Check parameters
-		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailjet SET";
@@ -404,7 +376,6 @@ class DolMailjet extends CommonObject
 		$sql.= " mailjet_permalink=".(isset($this->mailjet_permalink)?"'".$this->db->escape($this->mailjet_permalink)."'":"null").",";
 		$sql.= " fk_user_mod=".$user->id;
 
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -415,10 +386,8 @@ class DolMailjet extends CommonObject
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		if (! $error) {
+			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -432,18 +401,14 @@ class DolMailjet extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
+		if ($error)	{
+			foreach($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
+		}else {
 			$this->db->commit();
 			return 1;
 		}
@@ -457,17 +422,14 @@ class DolMailjet extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger=0)
-	{
+	function delete($user, $notrigger=0) {
 		global $conf, $langs;
 		$error=0;
 
 		$this->db->begin();
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
+		if (! $error) {
+			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -480,8 +442,7 @@ class DolMailjet extends CommonObject
 			}
 		}
 
-		if (! $error)
-		{
+		if (! $error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailjet";
 			$sql.= " WHERE rowid=".$this->id;
 
@@ -493,78 +454,18 @@ class DolMailjet extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
+		if ($error)	{
+			foreach($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
 			$this->db->rollback();
 			return -1*$error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
 	}
-
-
-
-	/**
-	 *	Load an object from its id and create a new one in database
-	 *
-	 *	@param	int		$fromid     Id of object to clone
-	 * 	@return	int					New id of clone
-	 */
-	function createFromClone($fromid)
-	{
-		global $user,$langs;
-
-		$error=0;
-
-		$object=new Mailjet($this->db);
-
-		$this->db->begin();
-
-		// Load source object
-		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
-
-		// Clear fields
-		// ...
-
-		// Create clone
-		$result=$object->create($user);
-
-		// Other options
-		if ($result < 0)
-		{
-			$this->error=$object->error;
-			$error++;
-		}
-
-		if (! $error)
-		{
-
-
-		}
-
-		// End
-		if (! $error)
-		{
-			$this->db->commit();
-			return $object->id;
-		}
-		else
-		{
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
 
 	/**
 	 *	Initialise object with example values
@@ -572,8 +473,7 @@ class DolMailjet extends CommonObject
 	 *
 	 *	@return	void
 	 */
-	function initAsSpecimen()
-	{
+	function initAsSpecimen() {
 		$this->id=0;
 
 		$this->entity=$conf->entity;
@@ -777,17 +677,14 @@ class DolMailjet extends CommonObject
 
 		dol_syslog(get_class($this)."::addContactList sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql)	{
 			$num=$this->db->num_rows($resql);
 			$i=0;
 				
-			if ($num)
-			{
+			if ($num) {
 				$mail_arr=array();
 
-				while ($i < $num)
-				{
+				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 						
 					if (!in_array($obj->email, $mail_arr)) {
@@ -806,9 +703,9 @@ class DolMailjet extends CommonObject
 		if (count($mail_arr)>0) {
 			# Parameters
 			$params = array(
-			'method' => 'POST',
-			'contacts' => implode(',',$mail_arr),
-			'id' => $this->mailjet_contact_list_id
+				'method' => 'POST',
+				'contacts' => implode(',',$mail_arr),
+				'id' => $this->mailjet_contact_list_id
 			);
 			# Call
 			$response = $this->mailjet->listsAddManyContacts($params);
@@ -841,16 +738,16 @@ class DolMailjet extends CommonObject
 		}
 
 		$params = array(
-		'method' => 'POST',
-		'subject' => $this->currentmailing->sujet,
-		'list_id' => $this->mailjet_contact_list_id,
-		'lang' => $this->mailjet_lang,
-		'from' => $this->currentmailing->email_from,
-		'from_name' => $this->mailjet_sender_name,
-		'footer' => 'default',
-		'edition_mode' => 'html',
-		'permalink'=>$this->mailjet_permalink,
-		'title'=>$this->currentmailing->titre
+			'method' => 'POST',
+			'subject' => $this->currentmailing->sujet,
+			'list_id' => $this->mailjet_contact_list_id,
+			'lang' => $this->mailjet_lang,
+			'from' => $this->currentmailing->email_from,
+			'from_name' => $this->mailjet_sender_name,
+			'footer' => 'default',
+			'edition_mode' => 'html',
+			'permalink'=>$this->mailjet_permalink,
+			'title'=>$this->currentmailing->titre
 		);
 
 		# Call
@@ -883,17 +780,17 @@ class DolMailjet extends CommonObject
 		}
 
 		$params = array(
-		'method' => 'POST',
-		'id' => $this->mailjet_id,
-		'subject' => $this->currentmailing->sujet,
-		'list_id' => $this->mailjet_contact_list_id,
-		'lang' => $this->mailjet_lang,
-		'from' => $this->currentmailing->email_from,
-		'from_name' => $this->mailjet_sender_name,
-		'footer' => 'default',
-		'edition_mode' => 'html',
-		'permalink'=>$this->mailjet_permalink,
-		'title'=>$this->currentmailing->titre
+			'method' => 'POST',
+			'id' => $this->mailjet_id,
+			'subject' => $this->currentmailing->sujet,
+			'list_id' => $this->mailjet_contact_list_id,
+			'lang' => $this->mailjet_lang,
+			'from' => $this->currentmailing->email_from,
+			'from_name' => $this->mailjet_sender_name,
+			'footer' => 'default',
+			'edition_mode' => 'html',
+			'permalink'=>$this->mailjet_permalink,
+			'title'=>$this->currentmailing->titre
 		);
 
 		# Call
@@ -926,8 +823,8 @@ class DolMailjet extends CommonObject
 
 		# Parameters
 		$params = array(
-		'method' => 'POST',
-		'id' => $this->mailjet_contact_list_id
+			'method' => 'POST',
+			'id' => $this->mailjet_contact_list_id
 		);
 		# Call
 		$response = $this->mailjet->listsDelete($params);
@@ -984,8 +881,7 @@ class DolMailjet extends CommonObject
 				}
 				return $sender_found;
 			}
-		}else {return true;
-		}
+		}else {return true;}
 	}
 
 
@@ -1014,9 +910,9 @@ class DolMailjet extends CommonObject
 		}
 
 		$params = array(
-		'method' => 'POST',
-		'contacts' => implode(',',$email_arr),
-		'id' => $this->mailjet_contact_list_id
+			'method' => 'POST',
+			'contacts' => implode(',',$email_arr),
+			'id' => $this->mailjet_contact_list_id
 		);
 
 		# Call
@@ -1039,7 +935,7 @@ class DolMailjet extends CommonObject
 	}
 
 	/**
-	 *	Create MailJet Full campaign (contact list/contact and campaign)
+	 *	Update MailJet campaign
 	 *
 	 *  @param	User	$user        User that creates
 	 * 	@return	int			 		<0 if KO, >0 if OK
@@ -1048,7 +944,9 @@ class DolMailjet extends CommonObject
 
 		global $conf;
 
-		/*//Update contact to contact list
+		// Not use because once the Dolibarr is validated no destinaries can be added
+		/*
+		//Update contact to contact list
 		$result=$this->updateContactList();
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::updateMailJetCampaign ".$this->error, LOG_ERR);
@@ -1167,25 +1065,25 @@ class DolMailjet extends CommonObject
 		}
 
 		$substitutionarray=array(
-		'[[UNSUB_LINK_EN]]' => '<a href="[[UNSUB_LINK_EN]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-		'[[UNSUB_LINK_FR]]' => '<a href="[[UNSUB_LINK_EN]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-		'[[UNSUB_LINK_DE]]' => '<a href="[[UNSUB_LINK_DE]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-		'[[UNSUB_LINK_ES]]' => '<a href="[[UNSUB_LINK_ES]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-		'[[UNSUB_LINK_NL]]' => '<a href="[[UNSUB_LINK_NL]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-		'[[UNSUB_LINK_IT]]' => '<a href="[[UNSUB_LINK_IT]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-		'[[SHARE_FACEBOOK]]' => '<a href="[[SHARE_FACEBOOK]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>',
-		'[[SHARE_TWITTER]]' => '<a href="[[SHARE_TWITTER]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>',
-		'[[SHARE_GOOGLE]]' => '<a href="[[SHARE_GOOGLE]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>',
-		'[[SHARE_LINKEDIN]]' => '<a href="[[SHARE_LINKEDIN]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>'
+			'[[UNSUB_LINK_EN]]' => '<a href="[[UNSUB_LINK_EN]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[UNSUB_LINK_FR]]' => '<a href="[[UNSUB_LINK_EN]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[UNSUB_LINK_DE]]' => '<a href="[[UNSUB_LINK_DE]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[UNSUB_LINK_ES]]' => '<a href="[[UNSUB_LINK_ES]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[UNSUB_LINK_NL]]' => '<a href="[[UNSUB_LINK_NL]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[UNSUB_LINK_IT]]' => '<a href="[[UNSUB_LINK_IT]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[SHARE_FACEBOOK]]' => '<a href="[[SHARE_FACEBOOK]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>',
+			'[[SHARE_TWITTER]]' => '<a href="[[SHARE_TWITTER]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>',
+			'[[SHARE_GOOGLE]]' => '<a href="[[SHARE_GOOGLE]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>',
+			'[[SHARE_LINKEDIN]]' => '<a href="[[SHARE_LINKEDIN]]" target="_blank">'.$langs->trans("MailJetSocialNetworkLink").'</a>'
 		);
 		$body=make_substitutions($this->currentmailing->body,$substitutionarray);
 		
 		# Parameters
 		$params = array(
-		'method' => 'POST',
-		'id' => $this->mailjet_id,
-		'html' => $body,
-		'text' => $this->currentmailing->body
+			'method' => 'POST',
+			'id' => $this->mailjet_id,
+			'html' => $body,
+			'text' => $this->currentmailing->body
 		);
 		# Call
 		$response = $this->mailjet->messageSetHtmlCampaign($params);
@@ -1204,7 +1102,7 @@ class DolMailjet extends CommonObject
 	 *	@param $typeresult   string		'string','array'
 	 * 	@return	mixed			 		array of contact email, or string with email only
 	 */
-	function listCampaignConcatsList($typeresult='array'){
+	function listCampaignConcatsList($typeresult='array') {
 		//Get Current MailJetInstace
 		$result=$this->getInstanceMailJet();
 		if ($result<0) {
@@ -1213,7 +1111,7 @@ class DolMailjet extends CommonObject
 		}
 
 		$params = array(
-		'id' => $this->mailjet_contact_list_id
+			'id' => $this->mailjet_contact_list_id
 		);
 
 		# Call
@@ -1252,7 +1150,7 @@ class DolMailjet extends CommonObject
 	 *	@param $typeresult   string		'string','array'
 	 * 	@return	mixed			 		array of contact email, or string with email only
 	 */
-	function listCampaignConcatsListStatus($typeresult='array'){
+	function listCampaignConcatsListStatus($typeresult='array') {
 		//Get Current MailJetInstace
 		$result=$this->getInstanceMailJet();
 		if ($result<0) {
@@ -1328,4 +1226,3 @@ class DolMailjet extends CommonObject
 	}
 
 }
-?>

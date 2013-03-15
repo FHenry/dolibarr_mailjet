@@ -18,13 +18,10 @@
 
 /**
  *	\file		lib/mailjet.lib.php
- *	\ingroup	mymodule
- *	\brief		This file is an example module library
- *				Put some comments here
+ *	\ingroup	mailjet
  */
 
-function mailjetAdminPrepareHead()
-{
+function mailjetAdminPrepareHead() {
 	global $langs, $conf;
 
 	$langs->load("mailjet@mailjet");
@@ -41,15 +38,9 @@ function mailjetAdminPrepareHead()
 	$head[$h][2] = 'about';
 	$h++;
 
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	//$this->tabs = array(
-	//	'entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
-	//); // to add new tab
-	//$this->tabs = array(
-	//	'entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'
-	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mailjet');
+	
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'mailjet', 'remove');
 
 	return $head;
 }

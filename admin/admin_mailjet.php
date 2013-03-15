@@ -53,23 +53,17 @@ $error=0;
  * Actions
  */
 
-if ($action == 'setvar')
-{		
+if ($action == 'setvar') {		
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_SMTP_SERVER', GETPOST('MAILJET_MAIL_SMTP_SERVER'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	
 	$res = dolibarr_set_const($db, 'MAILJET_SMTP_PORT', GETPOST('MAILJET_SMTP_PORT'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_SMTPS_ID', GETPOST('MAILJET_MAIL_SMTPS_ID'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_SMTPS_PW', GETPOST('MAILJET_MAIL_SMTPS_PW'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_EMAIL_TLS', GETPOST('MAILJET_MAIL_EMAIL_TLS'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;	
-	
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_EMAIL_FROM', GETPOST('MAILJET_MAIL_EMAIL_FROM'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	
@@ -82,7 +76,7 @@ if ($action == 'setvar')
 
 if ($action=='mailjetactiv') {
 	
-	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', $value,'chaine',0,'',0);
+	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', $value,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	
 	if ($value==0) {
@@ -290,7 +284,7 @@ print '<input type="hidden" name="action" value="activmailjet">';
 print '<tr class="liste_titre">';
 print '<td width="40%">'.$langs->trans("MailJetActiveSending").'</td>';
 print '<td align="center">';
-if (! empty($conf->global->MAILJET_ACTIVE)) {
+if (!empty($conf->global->MAILJET_ACTIVE)) {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=mailjetactiv&value=0">';
 	print img_picto($langs->trans("Disabled"),'switch_on');
 	print "</a></td>\n";
@@ -307,9 +301,5 @@ if (! empty($conf->global->MAILJET_ACTIVE)) {
 	dol_htmloutput_mesg($langs->trans("MailJetDolibarrCheckSettings",dol_buildpath('/admin/mails.php',1).'?mainmenu=home&leftmenu=setup'),'','ok',1);	
 }
 
-
-
-
 llxFooter();
-
 $db->close();

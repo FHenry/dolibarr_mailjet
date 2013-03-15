@@ -39,8 +39,7 @@ class ActionsMailjet
 	 *
 	 *	@param	DoliDB	$db			Database handler
 	*/
-	function __construct($db)
-	{
+	function __construct($db) {
 		$this->db = $db ;
 		$this->error = 0;
 		$this->errors = array();
@@ -55,8 +54,7 @@ class ActionsMailjet
 	 *	@param	string	$action			Action type
 	 *	@return	void
 	 */
-	function doActions($parameters=false, &$object, &$action='')
-	{
+	function doActions($parameters=false, &$object, &$action='') {
 		global $langs,$conf;
 		
 		$langs->load("mailjet@mailjet");
@@ -72,9 +70,7 @@ class ActionsMailjet
 									'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
 									'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
 									'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
-									'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin'
-		
-		);
+									'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin');
 		
 		$object->substitutionarrayfortest = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
     								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
@@ -113,8 +109,7 @@ class ActionsMailjet
 			$error_file_attach=false;
 			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
 			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-			if (count($listofpaths))
-			{
+			if (count($listofpaths)) {
 				setEventMessage('MailJet:'.$langs->trans("MailJetNoFileAttached"),'warnings');
 				$error_mailjet_control++;
 			}

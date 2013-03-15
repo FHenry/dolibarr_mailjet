@@ -28,15 +28,12 @@ if (! $res) {
 	$res = @include("../../../main.inc.php"); // From "custom" directory
 }
 
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once "../lib/mailjet.lib.php";
 
 dol_include_once('/mailjet/lib/PHP_Markdown_1.0.1o/markdown.php');
 
-
-//require_once "../class/myclass.class.php";
 // Translations
 $langs->load("mailjet@mailjet");
 
@@ -56,19 +53,12 @@ $page_name = "MailJetAbout";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-	. $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'. $langs->trans("BackToModuleList") . '</a>';
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
 $head = mailjetAdminPrepareHead();
-dol_fiche_head(
-	$head,
-	'about',
-	$langs->trans("Module123451Name"),
-	0,
-	'mailjet@mailjet'
-);
+dol_fiche_head($head,'about',$langs->trans("Module123451Name"),0,'mailjet@mailjet');
 
 // About page goes here
 echo $langs->trans("MailJetAboutPage");
@@ -79,8 +69,8 @@ $buffer = file_get_contents(dol_buildpath('/mailjet/README.md', 0));
 echo Markdown($buffer);
 
 echo '<br>',
-'<a href="' . dol_buildpath('/mailjet/COPYING', 1) . '">',
-'<img src="' . dol_buildpath('/mailjet/img/gplv3.png', 1) . '"/>',
+'<a href="'.dol_buildpath('/mailjet/COPYING', 1).'">',
+'<img src="'.dol_buildpath('/mailjet/img/gplv3.png', 1).'"/>',
 '</a>';
 
 llxFooter();

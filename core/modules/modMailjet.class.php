@@ -73,6 +73,7 @@ class modMailjet extends DolibarrModules
 		$this->phpmin = array(5, 3);
 
 		$this->need_dolibarr_version = array(3, 3);
+		
 		$this->langfiles = array("mailjet@mailjet"); // langfiles@mymodule
 
 		$this->const = array(
@@ -203,18 +204,17 @@ class modMailjet extends DolibarrModules
 					0
 				),
 				14=>array(
-				'MAILJET_MAIL_EMAIL_FROM_STD',
-				'chaine',
-				'',
-				'Normal default mail sender',
-				0,
-				'current',
-				0
+					'MAILJET_MAIL_EMAIL_FROM_STD',
+					'chaine',
+					'',
+					'Normal default mail sender',
+					0,
+					'current',
+					0
 				)
 		);
 
 		// Array to add new pages in new tabs
-		// Example:
 		$this->tabs = array(
 				'emailing:+tabMailJetSending:MailJetSending:mailjet@mailjet:$user->rights->mailing->creer:/mailjet/mailjet/mailjet.php?id=__ID__'
 		);
