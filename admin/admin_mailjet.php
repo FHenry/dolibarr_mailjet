@@ -103,7 +103,7 @@ if ($action=='mailjetactiv') {
 	}
 	if ($value==1) {
 		
-		if (empty($conf->MAIN_MAIL_SMTPS_ID)) {
+		if (empty($conf->global->MAIN_MAIL_SMTPS_ID)) {
 			setEventMessage($langs->trans("MailJetAPIKeyNotSet"),'errors');
 			$error++;
 		}

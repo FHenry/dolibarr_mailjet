@@ -57,3 +57,4 @@ example for a Windows system: C:/My Web Sites/Dolibarr/htdocs/custom
 Other Licences
 --------------
 Uses Michel Fortin's PHP Markdown Licensed under BSD to display this README.
+MailJet API author Mailjet
