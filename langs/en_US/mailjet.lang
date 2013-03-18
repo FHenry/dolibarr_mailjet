@@ -40,6 +40,12 @@ MailJetAbout = About MailJet
 MailJetAboutPage = MailJet about page
 
 #
+# Right
+#
+Permission1234511 = Read MailJet campaign property
+Permission1234512 = Write MailJet campaign property
+
+#
 # Menu
 #
 MailJetSending=MailJet

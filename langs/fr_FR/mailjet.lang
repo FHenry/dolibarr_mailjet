@@ -40,6 +40,12 @@ MailJetAbout = À propos de MailJet
 MailJetAboutPage = Page à propos de MailJet
 
 #
+# Right
+#
+Permission1234511 = Lecture des attributs des campagnes MailJet
+Permission1234512 = Ecriture des attributs des campagnes MailJet
+
+#
 # Menu
 #
 MailJetSending=MailJet

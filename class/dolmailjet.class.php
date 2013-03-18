@@ -730,38 +730,87 @@ class DolMailjet extends CommonObject
 	 * 	@return	int			 		<0 if KO, >0 if OK
 	 */
 	function createCampaign() {
+		
+		global $langs;
+		
+		$error=0;
 		//Get Current MailJetInstace
 		$result=$this->getInstanceMailJet();
 		if ($result<0) {
 			dol_syslog(get_class($this)."::createCampaign ".$this->error, LOG_ERR);
 			return -1;
 		}
+		
+		if (empty($this->currentmailing->sujet)) {
+			$this->errors[]='Subject is required';
+			$error++;
+		}
+		
+		//Unsubscribe link mandatory
+		if (preg_match('/\[\[UNSUB_LINK_.*\]\]/',$this->currentmailing->body)==0) {
+			$this->errors[]='MailJet Unsucribe link is mandatory';
+			$error++;
+		}
+			
+		//Standard substitution are not allow in MailJet Mailing
+		$subs_arr=array();
+		if (preg_match_all('/__.*__/',$this->currentmailing->body,$subs_arr)) {
+			$subs_uses='';
+			if (count($subs_arr[0])>0) {
+				$subs_uses=implode(',',$subs_arr[0]);
+			}
+			$this->errors[]='The substitution '.$subs_uses.' will not work with MailJet';
+			$error++;
+		}
 
-		$params = array(
-			'method' => 'POST',
-			'subject' => $this->currentmailing->sujet,
-			'list_id' => $this->mailjet_contact_list_id,
-			'lang' => $this->mailjet_lang,
-			'from' => $this->currentmailing->email_from,
-			'from_name' => $this->mailjet_sender_name,
-			'footer' => 'default',
-			'edition_mode' => 'html',
-			'permalink'=>$this->mailjet_permalink,
-			'title'=>$this->currentmailing->titre
-		);
-
-		# Call
-		$response = $this->mailjet->messageCreateCampaign($params);
-
-		if ($response===false) {
-			$this->error=print_r($this->mailjet->_response->errors,true);
-			dol_syslog(get_class($this)."::createCampaign Error".$this->error, LOG_ERR);
+		if (empty($this->mailjet_lang)) {
+			$this->errors[]='MailJet lang is required';
+			$error++;
+		}
+		
+		if (empty($this->currentmailing->email_from)) {
+			$this->errors[]='Mail From is required';
+			$error++;
+		}
+		
+		if (empty($this->mailjet_sender_name)) {
+			$this->errors[]='Mailjet sender name is required';
+			$error++;
+		}
+		
+		if (empty($error)) { 
+			$params = array(
+				'method' => 'POST',
+				'subject' => $this->currentmailing->sujet,
+				'list_id' => $this->mailjet_contact_list_id,
+				'lang' => $this->mailjet_lang,
+				'from' => $this->currentmailing->email_from,
+				'from_name' => $this->mailjet_sender_name,
+				'footer' => 'default',
+				'edition_mode' => 'html',
+				'permalink'=>$this->mailjet_permalink,
+				'title'=>$this->currentmailing->titre .' - le '.dol_print_date(dol_now(),'%d-%m-%Y %H:%M')
+			);
+	
+			# Call
+			$response = $this->mailjet->messageCreateCampaign($params);
+	
+			if ($response===false) {
+				$this->error=print_r($this->mailjet->_response->errors,true);
+				dol_syslog(get_class($this)."::createCampaign Error".$this->error, LOG_ERR);
+				return -1;
+			}else {
+				# Result
+				$this->mailjet_url=$response->campaign->url;
+				$this->mailjet_id=$response->campaign->id;
+				return 1;
+			}
+		} else {
+			foreach($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::createCampaign ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
 			return -1;
-		}else {
-			# Result
-			$this->mailjet_url=$response->campaign->url;
-			$this->mailjet_id=$response->campaign->id;
-			return 1;
 		}
 	}
 

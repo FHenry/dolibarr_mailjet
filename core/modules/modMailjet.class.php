@@ -232,6 +232,18 @@ class modMailjet extends DolibarrModules
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
+		
+		$this->rights[$r][0] = 1234511;
+		$this->rights[$r][1] = 'read';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'read';
+		$r++;
+		
+		$this->rights[$r][0] = 1234512;
+		$this->rights[$r][1] = 'write';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'write';
+		$r++;
 
 		// Main menu entries
 		$this->menus = array(); // List of menus to add

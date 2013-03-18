@@ -157,8 +157,8 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 }
 
 
-if ($action=='setsendername') {
-	$mailjet->mailjet_sender_name  = GETPOST('sendername','alpha');
+if ($action=='setmailjet_sender_name') {
+	$mailjet->mailjet_sender_name  = GETPOST('mailjet_sender_name','alpha');
 	if (empty($mailjet->id)) {
 		$mailjet->fk_mailing=$object->id;
 		$result=$mailjet->create($user);
@@ -175,8 +175,8 @@ if ($action=='setsendername') {
 	}
 }
 
-if ($action=='setpermalink') {
-	$mailjet->mailjet_permalink  = GETPOST('permalink','alpha');
+if ($action=='setmailjet_permalink') {
+	$mailjet->mailjet_permalink  = GETPOST('mailjet_permalink','alpha');
 	if (empty($mailjet->id)) {
 		$mailjet->fk_mailing=$object->id;
 		$result=$mailjet->create($user);
@@ -193,8 +193,8 @@ if ($action=='setpermalink') {
 	}
 }
 
-if ($action=='setlang') {
-	$mailjet->mailjet_lang  = GETPOST('lang','alpha');
+if ($action=='setmailjet_lang') {
+	$mailjet->mailjet_lang  = GETPOST('mailjet_lang','alpha');
 	if (empty($mailjet->id)) {
 		$mailjet->fk_mailing=$object->id;
 		$result=$mailjet->create($user);
@@ -254,7 +254,7 @@ if ($action=='sendmailjetcampaign') {
 	}
 }
 
-if (action=='refreshstatus') {
+if ($action=='refreshstatus') {
 	//Update inforamtion from mailjet
 	$result=$mailjet->updateMailJetCampaignAttr($user);
 	if ($result<0) {
@@ -320,18 +320,30 @@ if ($object->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is
 }
 print '</td></tr>';
 
+
+//Glue to avoid problem with edit in place option
+if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) {
+	$objecttoedit=$mailjet;
+	if (empty($mailjet->id)) {
+		$mailjet->fk_mailing=$object->id;
+		$result=$mailjet->create($user);
+	}
+}else {
+	$objecttoedit=$object;
+}
+
 // MailJet Sender Name
 print '<tr><td width="15%">';
-print $form->editfieldkey("MailJetSenderName",'sendername',$mailjet->mailjet_sender_name,$object,$user->rights->mailing->creer && $object->statut < 3 && empty($mailjet->mailjet_id),'string');
+print $form->editfieldkey("MailJetSenderName",'mailjet_sender_name',$mailjet->mailjet_sender_name,$objecttoedit,$user->rights->mailing->creer && $object->statut < 3 && empty($mailjet->mailjet_id),'string');
 print '</td><td colspan="3">';
-print $form->editfieldval("MailJetSenderName",'sendername',$mailjet->mailjet_sender_name,$object,$user->rights->mailing->creer && $object->statut < 3 && empty($mailjet->mailjet_id),'string');
+print $form->editfieldval("MailJetSenderName",'mailjet_sender_name',$mailjet->mailjet_sender_name,$objecttoedit,$user->rights->mailing->creer && $object->statut < 3 && empty($mailjet->mailjet_id),'string');
 print '</td></tr>';
 
 // MailJet permalink
 print '<tr><td width="15%">';
-print $form->editfieldkey("MailJetPermalink",'permalink',$mailjet->mailjet_permalink,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;default:'.$langs->trans('Yes').',none:'.$langs->trans('No'));
+print $form->editfieldkey("MailJetPermalink",'mailjet_permalink',$mailjet->mailjet_permalink,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;default:'.$langs->trans('Yes').',none:'.$langs->trans('No'));
 print '</td><td colspan="2">';
-print $form->editfieldval("MailJetPermalink",'permalink',$mailjet->mailjet_permalink,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;default:'.$langs->trans('Yes').',none:'.$langs->trans('No'));
+print $form->editfieldval("MailJetPermalink",'mailjet_permalink',$mailjet->mailjet_permalink,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;default:'.$langs->trans('Yes').',none:'.$langs->trans('No'));
 print '</td>';
 print '<td>';
 print $form->textwithpicto('',$langs->trans("MailJetPermalinkHelp"),1,'help');
@@ -340,9 +352,9 @@ print '</tr>';
 
 // MailJet lang
 print '<tr><td width="15%">';
-print $form->editfieldkey("MailJetLang",'lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
+print $form->editfieldkey("MailJetLang",'mailjet_lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
 print '</td><td colspan="3">';
-print $form->editfieldval("MailJetLang",'lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
+print $form->editfieldval("MailJetLang",'mailjet_lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
 print '</td>';
 print '</tr>';
 

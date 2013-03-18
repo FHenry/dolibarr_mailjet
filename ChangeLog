@@ -17,3 +17,9 @@ For Dev
 ***** ChangeLog for 1.3 compared to 1.2 *****
 For all:
 	-Fix bug on admin page
+	
+***** ChangeLog for 1.4 compared to 1.3 *****
+For all:
+	- Add right management
+	- Fix problem if MAIN_USE_JQUERY_JEDITABLE is use in Dolibarr
+	- Add control on create campaign
