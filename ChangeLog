@@ -13,3 +13,7 @@ For all:
 	-Fix const entity problem
 For Dev
 	-Review code indentation
+	
+***** ChangeLog for 1.3 compared to 1.2 *****
+For all:
+	-Fix bug on admin page
