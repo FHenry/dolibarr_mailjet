@@ -23,3 +23,8 @@ For all:
 	- Add right management
 	- Fix problem if MAIN_USE_JQUERY_JEDITABLE is use in Dolibarr
 	- Add control on create campaign
+	
+***** ChangeLog for 1.5 compared to 1.4 *****
+For all:
+	- Do not do control if mailjet sending mail is not activated
+	- Do display MailJet inforamtion in mailjet tabs if mailjet sending mail is not activated

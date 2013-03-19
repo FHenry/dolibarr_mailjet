@@ -58,6 +58,8 @@ if (! $user->rights->mailing->creer || (empty($conf->global->EXTERNAL_USERS_ARE_
 }
 
 
+
+
 $object=new Mailing($db);
 $result=$object->fetch($id);
 if ($result<0) {
@@ -277,6 +279,10 @@ $head = emailing_prepare_head($object);
 
 dol_fiche_head($head, 'tabMailJetSending', $langs->trans("MailJet"), 0, 'email');
 
+if (!empty($conf->global->MAILJET_ACTIVE)) {
+
+
+
 $form = new Form($db);
 
 print '<table class="border" width="100%">';
@@ -287,6 +293,8 @@ print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object,'id', $linkback);
 print '</td></tr>';
+
+
 
 // Description
 print '<tr><td>'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
@@ -501,6 +509,10 @@ print '</tr>';
 
 print '</table>';
 print "<br>";
+}else {
+	dol_htmloutput_mesg($langs->trans("MailJetNotActive"),'','error',1);
+}
+
 
 // End of page
 llxFooter();

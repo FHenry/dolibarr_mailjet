@@ -128,3 +128,4 @@ MailJetSenderNameValid=eMail is validated by MailJet to send mail
 MailJetSendMailing=Send MailJet Campaign
 MailJetStatus=MailJet Status
 MailJetRefreshStatus=Refresh Dolibarr with MailJet statistique
+MailJetNotActive=MailJet module is activated but MailJet connector is not active

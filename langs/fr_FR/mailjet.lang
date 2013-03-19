@@ -129,3 +129,4 @@ MailJetSendMailing=Envoyer la campagne par MailJet
 MailJetStatus=Status MailJet
 MailJetSocialNetworkLink=Reseaux sociaux
 MailJetRefreshStatus=Rafraichir Dolibarr avec les statistique de MailJet
+MailJetNotActive=Le module MailJet est activé mais l'envoie des mails par MailJet est désactivé

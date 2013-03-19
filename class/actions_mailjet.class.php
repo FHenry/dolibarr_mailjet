@@ -55,72 +55,77 @@ class ActionsMailjet
 	 *	@return	void
 	 */
 	function doActions($parameters=false, &$object, &$action='') {
+		
 		global $langs,$conf;
 		
-		$langs->load("mailjet@mailjet");
 		
-		//Change substitution array
-		$object->substitutionarray = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
-    								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
-									'[[UNSUB_LINK_DE]]' => 'MailjetUnsubscribeDE',
-									'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
-									'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
-									'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
-									'[[EMAIL_TO]]'=> 'MailjeteMailto',
-									'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
-									'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
-									'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
-									'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin');
-		
-		$object->substitutionarrayfortest = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
-    								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
-									'[[UNSUB_LINK_DE]]' => 'MailjetUnsubscribeDE',
-									'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
-									'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
-									'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
-									'[[EMAIL_TO]]'=> 'MailjeteMailto',
-									'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
-									'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
-									'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
-									'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin');
-		
-		if ($action=='' || $action=='valid') {
-			$error_mailjet_control=0;
-			//Unsubscribe link mandatory
-			if (preg_match('/\[\[UNSUB_LINK_.*\]\]/',$object->body)==0) {
-				setEventMessage('MailJet:'.$langs->trans("MailJetUnsubLinkMandatory"),'warnings');
-				$error_mailjet_control++;
-			}
+		if (!empty($conf->global->MAILJET_ACTIVE)) {
 			
-			//Standard substitution are not allow in MailJet Mailing
-			$subs_arr=array();
-			if (preg_match_all('/__.*__/',$object->body,$subs_arr)) {
-				$subs_uses='';
-				if (count($subs_arr[0])>0) {
-					$subs_uses=implode(',',$subs_arr[0]);
+			$langs->load("mailjet@mailjet");
+				
+			//Change substitution array
+			$object->substitutionarray = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
+	    								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
+										'[[UNSUB_LINK_DE]]' => 'MailjetUnsubscribeDE',
+										'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
+										'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
+										'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
+										'[[EMAIL_TO]]'=> 'MailjeteMailto',
+										'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
+										'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
+										'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
+										'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin');
+			
+			$object->substitutionarrayfortest = array('[[UNSUB_LINK_EN]]' => 'MailjetUnsubscribeEN',
+	    								'[[UNSUB_LINK_FR]]' => 'MailjetUnsubscribeFR',
+										'[[UNSUB_LINK_DE]]' => 'MailjetUnsubscribeDE',
+										'[[UNSUB_LINK_ES]]' => 'MailjetUnsubscribeES',
+										'[[UNSUB_LINK_NL]]' => 'MailjetUnsubscribeNL',
+										'[[UNSUB_LINK_IT]]' => 'MailjetUnsubscribeIT',
+										'[[EMAIL_TO]]'=> 'MailjeteMailto',
+										'[[SHARE_FACEBOOK]]' => 'MailJetURLFacebook',
+										'[[SHARE_TWITTER]]' => 'MailJetURLTwitter',
+										'[[SHARE_GOOGLE]]' => 'MailJetURLGoogle',
+										'[[SHARE_LINKEDIN]]' => 'MailJetURLLinkedin');
+			
+			if ($action=='' || $action=='valid') {
+				$error_mailjet_control=0;
+				//Unsubscribe link mandatory
+				if (preg_match('/\[\[UNSUB_LINK_.*\]\]/',$object->body)==0) {
+					setEventMessage('MailJet:'.$langs->trans("MailJetUnsubLinkMandatory"),'warnings');
+					$error_mailjet_control++;
 				}
-				setEventMessage('MailJet:'.$langs->trans("MailJetNoStdReplacement",$subs_uses),'warnings');
-				$error_mailjet_control++;
+				
+				//Standard substitution are not allow in MailJet Mailing
+				$subs_arr=array();
+				if (preg_match_all('/__.*__/',$object->body,$subs_arr)) {
+					$subs_uses='';
+					if (count($subs_arr[0])>0) {
+						$subs_uses=implode(',',$subs_arr[0]);
+					}
+					setEventMessage('MailJet:'.$langs->trans("MailJetNoStdReplacement",$subs_uses),'warnings');
+					$error_mailjet_control++;
+				}
+				
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				
+				//Attached file are not allowed for MailJet Mailing
+				$error_file_attach=false;
+				$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
+				$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
+				if (count($listofpaths)) {
+					setEventMessage('MailJet:'.$langs->trans("MailJetNoFileAttached"),'warnings');
+					$error_mailjet_control++;
+				}
+				
+				if ($action=='valid' && !empty($error_mailjet_control)) {
+					setEventMessage('MailJet:'.$langs->trans("MailJetCannotSendControlNotOK"),'warnings');
+				}
 			}
 			
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			
-			//Attached file are not allowed for MailJet Mailing
-			$error_file_attach=false;
-			$upload_dir = $conf->mailing->dir_output . "/" . get_exdir($object->id,2,0,1);
-			$listofpaths=dol_dir_list($upload_dir,'all',0,'','','name',SORT_ASC,0);
-			if (count($listofpaths)) {
-				setEventMessage('MailJet:'.$langs->trans("MailJetNoFileAttached"),'warnings');
-				$error_mailjet_control++;
+			if ($action=='sendall') {
+				setEventMessage('MailJet:'.$langs->trans("MailJetToSendByMailJetGoToMailJet"),'warnings');
 			}
-			
-			if ($action=='valid' && !empty($error_mailjet_control)) {
-				setEventMessage('MailJet:'.$langs->trans("MailJetCannotSendControlNotOK"),'warnings');
-			}
-		}
-		
-		if ($action=='sendall') {
-			setEventMessage('MailJet:'.$langs->trans("MailJetToSendByMailJetGoToMailJet"),'warnings');
 		}
 	
 	}
