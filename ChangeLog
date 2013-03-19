@@ -28,3 +28,8 @@ For all:
 For all:
 	- Do not do control if mailjet sending mail is not activated
 	- Do display MailJet inforamtion in mailjet tabs if mailjet sending mail is not activated
+	
+***** ChangeLog for 1.6 compared to 1.5 *****
+For all:
+	- Update destinaries status and prospection status of thirdparty linked according mailjet contact list status
+	- Do not add to MailJet contact list the contact that do not want to be contacted anymore (unsubcribe)

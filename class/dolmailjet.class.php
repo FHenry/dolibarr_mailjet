@@ -592,6 +592,57 @@ class DolMailjet extends CommonObject
 				return -1;
 			}
 		}
+		
+		//Also update dolibarr destinaries status
+		$mailjet_contact_arr=$this->listCampaignConcatsListStatus();
+		if (count($mailjet_contact_arr)>0) {
+			foreach($mailjet_contact_arr as $obj) {
+				
+				$dolibarr_contact_status=1;
+					
+				if ($obj->status=='queued') {
+					$dolibarr_contact_status=0;
+				}
+				if (($obj->status=='sent') || ($obj->status=='spam')) {
+					$dolibarr_contact_status=1;
+				}
+				if (($obj->status=='opened') || ($obj->status=='clicked')){
+					$dolibarr_contact_status=2;
+				}
+				if ($obj->status=='bounce') {
+					$dolibarr_contact_status=-1;
+				}
+				if ($obj->status=='unsub') {
+					$dolibarr_contact_status=3;
+				}
+	
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		        $sql .= " SET statut=".$dolibarr_contact_status;
+		        $sql .= " WHERE fk_mailing=".$this->fk_mailing." AND email = '".$obj->email."'";
+		        
+		        dol_syslog(get_class($this)."::updateMailJetCampaignAttr sql=".$sql, LOG_DEBUG);
+		        $resql=$this->db->query($sql);
+		        if (!$resql) {
+		        	$this->error="Error ".$this->db->lasterror();
+					dol_syslog(get_class($this)."::updateMailJetCampaignAttr Error:".$this->error, LOG_ERR);
+					return -1;
+		        }
+		        //Also mark the thridparty as "do not contact anymore
+		        if ($dolibarr_contact_status==3) {
+		        	//Update status communication of thirdparty prospect
+		        	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=-1 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$this->fk_mailing." AND email = '".$obj->email."' AND source_type='thirdparty' AND source_id is not null)";
+		        	
+		        	 dol_syslog(get_class($this)."::updateMailJetCampaignAttr sql=".$sql, LOG_DEBUG);
+		        	
+		        	$resql=$this->db->query($sql);
+		        	if (!$resql) {
+		        		$this->error="Error ".$this->db->lasterror();
+		        		dol_syslog(get_class($this)."::updateMailJetCampaignAttr Error:".$this->error, LOG_ERR);
+		        		return -1;
+		        	}
+		        }
+			}
+		}
 	}
 	
 	/**
@@ -673,7 +724,7 @@ class DolMailjet extends CommonObject
 		}
 
 		//Build the mailing contact list
-		$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\'';
+		$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\' AND status<>3';
 
 		dol_syslog(get_class($this)."::addContactList sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -721,6 +772,8 @@ class DolMailjet extends CommonObject
 			dol_syslog(get_class($this)."::addContactList ".$this->error, LOG_ERR);
 			return -1;
 		}
+		
+		return $num;
 	}
 
 	/**
