@@ -33,3 +33,7 @@ For all:
 For all:
 	- Update destinaries status and prospection status of thirdparty linked according mailjet contact list status
 	- Do not add to MailJet contact list the contact that do not want to be contacted anymore (unsubcribe)
+
+**** ChangeLog for 1.7 compared to 1.6 *****
+For all:
+	- Fix problem with resend already send campaign
