@@ -1093,7 +1093,7 @@ class DolMailjet extends CommonObject
 		}
 
 		//Create Contact List
-		$contactlistname=$this->currentmailing->id.preg_replace('/[^a-zA-Z0-9\-]/','',$this->currentmailing->titre);
+		$contactlistname=$this->currentmailing->id.preg_replace('/[^a-zA-Z0-9\-]/').dol_print_date(dol_now(),'dayhourlog','',$this->currentmailing->titre);
 
 		$result=$this->createContactList($contactlistname);
 		if ($result < 0) {
