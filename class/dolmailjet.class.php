@@ -616,8 +616,14 @@ class DolMailjet extends CommonObject
 					$dolibarr_contact_status=3;
 				}
 	
-				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-		        $sql .= " SET statut=".$dolibarr_contact_status;
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				$dolversion=version_dolibarr();
+				
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";				
+		        if(preg_match('#^3.4.*#',$dolversion))
+		        	$sql .= " SET status=".$dolibarr_contact_status;
+		        else
+			        $sql .= " SET statut=".$dolibarr_contact_status;
 		        $sql .= " WHERE fk_mailing=".$this->fk_mailing." AND email = '".$obj->email."'";
 		        
 		        dol_syslog(get_class($this)."::updateMailJetCampaignAttr sql=".$sql, LOG_DEBUG);
@@ -723,8 +729,13 @@ class DolMailjet extends CommonObject
 			return -1;
 		}
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$dolversion=version_dolibarr();
 		//Build the mailing contact list
-		$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\' AND status<>3';
+		if(preg_match('#^3.4.*#',$dolversion))
+			$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\' AND status<>3';
+		else
+			$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\' AND statut<>3';
 
 		dol_syslog(get_class($this)."::addContactList sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
