@@ -31,6 +31,7 @@ Module123451Desc = MailJet Connector
 MailJetSetup = MailJet setup
 Settings = Settings
 MailJetSetupPage = MailJet setup page
+MailJetErrorCurlNotLoaded=Error : CURL extension is not loaded in PHP configuration
 
 #
 # About page
