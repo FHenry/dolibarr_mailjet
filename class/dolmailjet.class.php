@@ -1337,5 +1337,37 @@ class DolMailjet extends CommonObject
 			}
 		}
 	}
+	
+	/**
+	 *	get MailJet campaign statistics
+	 *
+	 * 	@return	Array			Campaign statistics
+	 */
+	function getCampaignStatistics() {
+		
+		$result=$this->getInstanceMailJet();
+		if ($result<0) {
+			dol_syslog(get_class($this)."::getCampaignStatistics ".$this->error, LOG_ERR);
+			return -1;
+		}
+	
+		$params = array(
+			'campaign_id' => $this->mailjet_id
+		);
+	
+		# Call
+		$response = $this->mailjet->reportEmailStatistics();
+	
+		if ($response===false) {
+			$this->error=print_r($this->mailjet->_response,true);
+			dol_syslog(get_class($this)."::getCampaignStatistics ".$this->error, LOG_ERR);
+			return -1;
+		}else {
+			$stats = $response->stats;
+			
+			return $stats;
+		}
+	}
+	
 
 }

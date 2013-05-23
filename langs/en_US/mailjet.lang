@@ -130,3 +130,17 @@ MailJetSendMailing=Send MailJet Campaign
 MailJetStatus=MailJet Status
 MailJetRefreshStatus=Refresh Dolibarr with MailJet statistique
 MailJetNotActive=MailJet module is activated but MailJet connector is not active
+
+
+#
+# Statistics
+#
+MailJetStatistics=Statistics
+MailJetStatisticscto=CTO
+MailJetStatisticsdelivered_rate=Delivered rate
+MailJetStatisticsopened_rate=Opened rate
+MailJetStatisticsclicked_rate =Clicked rate
+MailJetStatisticsbounce_rate=Bounced rate
+MailJetStatisticsspam_rate=SPAM rate
+MailJetStatisticsblocked_rate=Blocked rate
+MailJetStatisticsfailure_rate=Errors rate
