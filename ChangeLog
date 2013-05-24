@@ -37,3 +37,7 @@ For all:
 **** ChangeLog for 1.7 compared to 1.6 *****
 For all:
 	- Fix problem with resend already send campaign
+	
+**** ChangeLog for 1.9 compared to 1.7 *****
+For all:
+	- Add statistics graph pages

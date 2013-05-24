@@ -377,6 +377,76 @@ if (!empty($mailjet->mailjet_id)) {
 	}
 	print '</td></tr>';
 	
+	//Stats campaign mailjet
+	print '<tr><td width="15%">';
+	print $langs->trans("MailJetStatistics");
+	print '</td><td colspan="">';
+	if (!empty($mailjet->mailjet_id)) {
+		$stats = $mailjet->getCampaignStatistics();
+		/*
+		print '<pre>';
+		var_dump($stats);
+		print '</pre>';
+		*/
+		$campaign_stats = array(
+		  'total'  =>  $stats->total,
+		  'opened' => $stats->opened,
+		  'clicked'=> $stats->clicked,
+		  'bounce'=> $stats->bounce,
+		  'blocked'=> $stats->blocked,
+		  'spam'=> $stats->spam,
+		  'delivered'=> $stats->delivered,
+		  'queued'=> $stats->queued,
+		  
+		 // 'notopened'=> $stats->delivered - $stats->opened,
+		);
+		
+		$dataseries=array();
+
+
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatussent"),'data'=>round($campaign_stats['delivered']));
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatusbounce"),'data'=>round($campaign_stats['bounce']));
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatusblocked"),'data'=>round($campaign_stats['blocked']));
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatusspam"),'data'=>round($campaign_stats['spam']));
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatusqueued"),'data'=>round($campaign_stats['queued']));
+		
+		
+		
+		$data=array('series'=>$dataseries);
+		dol_print_graph('stats',300,180,$data,1,'pie',0);
+		print '</td>';
+		
+		print '<td>';	
+		
+		$dataseries=array();
+		
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatusopened"),'data'=>round($campaign_stats['opened']));
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatusclicked"),'data'=>round($campaign_stats['clicked']));
+		$dataseries[]=array('label'=>$langs->trans("MailJetContactStatussent"),'data'=>round($campaign_stats['delivered']));
+		
+		$data=array('series'=>$dataseries);
+		dol_print_graph('stats2',300,180,$data,1,'pie',0);
+		
+		print '</td>';
+		print '<td>';
+		print $langs->trans("MailJetStatisticscto").' : '. $stats->cto.'%<br />';
+		print $langs->trans("MailJetStatisticsdelivered_rate").' : '. $stats->delivered_rate.'%<br />';
+		print $langs->trans("MailJetStatisticsopened_rate").' : '. $stats->opened_rate.'%<br />';
+		print $langs->trans("MailJetStatisticsclicked_rate").' : '. $stats->clicked_rate.'%<br />';
+		print $langs->trans("MailJetStatisticsbounce_rate").' : '. $stats->bounce_rate.'%<br />';
+		print $langs->trans("MailJetStatisticsspam_rate").' : '. $stats->spam_rate.'%<br />';
+		print $langs->trans("MailJetStatisticsblocked_rate").' : '. $stats->blocked_rate.'%<br />';
+		print $langs->trans("MailJetStatisticsfailure_rate").' : '. $stats->failure_rate.'%<br />';
+		
+		
+		
+		
+		
+	}
+	print '</td></tr>';
+	
+	
+	
 	// MailJet Campaign
 	print '<tr><td width="15%">';
 	print $langs->trans("MailJetCampaign");

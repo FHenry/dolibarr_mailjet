@@ -178,6 +178,13 @@ print '<BR>';
 echo $langs->trans("MailJetExplain");
 print '<BR>';
 
+if( !in_array('curl', get_loaded_extensions()))
+{
+	print '<div class="error">'.$langs->trans('MailJetErrorCurlNotLoaded').'</div>';
+	exit();
+}
+
+
 print '<table class="noborder" width="100%">';
 
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
