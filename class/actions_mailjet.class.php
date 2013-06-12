@@ -52,14 +52,14 @@ class ActionsMailjet
 	 *	@param	array	$parameters		Linked object
 	 *	@param	object	$object			Object
 	 *	@param	string	$action			Action type
+	 *  @param	object	$hookmanager	Hook manager class instance
 	 *	@return	void
 	 */
-	function doActions($parameters=false, &$object, &$action='') {
+	function doActions($parameters=false, &$object, &$action='',$hookmanager) {
 		
 		global $langs,$conf;
 		
-		
-		if (!empty($conf->global->MAILJET_ACTIVE)) {
+		if (!empty($conf->global->MAILJET_ACTIVE) && in_array('mailingcard',$hookmanager->contextarray)) {
 			
 			$langs->load("mailjet@mailjet");
 				

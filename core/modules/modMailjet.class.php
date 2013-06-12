@@ -52,7 +52,7 @@ class modMailjet extends DolibarrModules
 
 		$this->description = "Mailjet Connector";
 
-		$this->version = '1.9';
+		$this->version = '1.10';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 

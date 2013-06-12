@@ -41,3 +41,7 @@ For all:
 **** ChangeLog for 1.9 compared to 1.7 *****
 For all:
 	- Add statistics graph pages
+	
+**** ChangeLog for 1.10 compared to 1.9 *****
+For all:
+	- Add control on Mailjet hook
