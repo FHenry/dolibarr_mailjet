@@ -45,3 +45,8 @@ For all:
 **** ChangeLog for 1.10 compared to 1.9 *****
 For all:
 	- Add control on Mailjet hook
+	
+**** ChangeLog for 1.11 compared to 1.10 *****
+For all:
+	- Fix pgSQL bug
+	- Set comptability for dolibarr 3.4

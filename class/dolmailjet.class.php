@@ -124,9 +124,9 @@ class DolMailjet extends CommonObject
 		if (isset($this->mailjet_url)) $this->mailjet_url=trim($this->mailjet_url);
 		if (isset($this->mailjet_uri)) $this->mailjet_uri=trim($this->mailjet_uri);
 		if (isset($this->mailjet_contact_list_id)) $this->mailjet_contact_list_id=trim($this->mailjet_contact_list_id);
-		if (isset($this->mailjet_sender_name)) $this->mailjet_contact_list_id=trim($this->mailjet_sender_name);
-		if (isset($this->mailjet_permalink)) $this->mailjet_contact_list_id=trim($this->mailjet_permalink);
-		if (isset($this->mailjet_lang)) $this->mailjet_contact_list_id=trim($this->mailjet_lang);
+		if (isset($this->mailjet_sender_name)) $this->mailjet_sender_name=trim($this->mailjet_sender_name);
+		if (isset($this->mailjet_permalink)) $this->mailjet_permalink=trim($this->mailjet_permalink);
+		if (isset($this->mailjet_lang)) $this->mailjet_lang=trim($this->mailjet_lang);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -357,9 +357,9 @@ class DolMailjet extends CommonObject
 		if (isset($this->mailjet_uri)) $this->mailjet_uri=trim($this->mailjet_uri);
 		if (isset($this->mailjet_contact_list_id)) $this->mailjet_contact_list_id=trim($this->mailjet_contact_list_id);
 		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
-		if (isset($this->mailjet_lang)) $this->fk_user_mod=trim($this->mailjet_lang);
-		if (isset($this->mailjet_sender_name)) $this->fk_user_mod=trim($this->mailjet_sender_name);
-		if (isset($this->mailjet_permalink)) $this->fk_user_mod=trim($this->mailjet_permalink);
+		if (isset($this->mailjet_lang)) $this->mailjet_lang=trim($this->mailjet_lang);
+		if (isset($this->mailjet_sender_name)) $this->mailjet_sender_name=trim($this->mailjet_sender_name);
+		if (isset($this->mailjet_permalink)) $this->mailjet_permalink=trim($this->mailjet_permalink);
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailjet SET";
@@ -724,7 +724,7 @@ class DolMailjet extends CommonObject
 		}
 
 		//Build the mailing contact list
-		$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\' AND status<>3';
+		$sql='SELECT email FROM '.MAIN_DB_PREFIX.'mailing_cibles WHERE fk_mailing=\''.$this->currentmailing->id.'\' AND statut<>3';
 
 		dol_syslog(get_class($this)."::addContactList sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1326,5 +1326,37 @@ class DolMailjet extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 *	get MailJet campaign statistics
+	 *
+	 * 	@return	Array			Campaign statistics
+	 */
+	function getCampaignStatistics() {
+
+		$result=$this->getInstanceMailJet();
+		if ($result<0) {
+			dol_syslog(get_class($this)."::getCampaignStatistics ".$this->error, LOG_ERR);
+			return -1;
+		}
+
+		$params = array(
+			'campaign_id' => $this->mailjet_id
+		);
+
+		# Call
+		$response = $this->mailjet->reportEmailStatistics();
+
+		if ($response===false) {
+			$this->error=print_r($this->mailjet->_response,true);
+			dol_syslog(get_class($this)."::getCampaignStatistics ".$this->error, LOG_ERR);
+			return -1;
+		}else {
+			$stats = $response->stats;
+
+			return $stats;
+		}
+	}
+
 
 }

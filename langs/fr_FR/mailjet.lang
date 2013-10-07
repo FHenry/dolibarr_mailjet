@@ -54,22 +54,22 @@ MailJetSending=MailJet
 #
 # Admin
 #
-MailJetExplain=MailJet est un service gratuit d'envoie de mails <u><b>Internet Requis</b></u>.<BR> Pour plus d'information allez ici <a href="http://www.mailjet.com/" target="_blank">MailJet</a>.<BR>Pour voir vos identifiants : <a href="https://www.mailjet.com/account/setup" target="_blank">Mon compte MailJet</a>  
+MailJetExplain=MailJet est un service gratuit d'envoi de mails <u><b>Internet Requis</b></u>.<BR> Pour plus d'information allez ici <a href="http://www.mailjet.com/" target="_blank">MailJet</a>.<BR>Pour voir vos identifiants : <a href="https://www.mailjet.com/account/setup" target="_blank">Mon compte MailJet</a>  
 MAILJET_MAIL_SMTP_SERVER=MailJet serveur SMTP 
-MAILJET_MAIL_SMTP_SERVERHelp=Vérifiez vos paramétre MailJet (SMTP server)
+MAILJET_MAIL_SMTP_SERVERHelp=Vérifiez vos paramètres MailJet (SMTP server)
 MAILJET_SMTP_PORT=MailJet port serveur SMTP 
-MAILJET_SMTP_PORTHelp=Vérifiez vos paramétre MailJet (Port)
+MAILJET_SMTP_PORTHelp=Vérifiez vos paramètres MailJet (Port)
 MAILJET_MAIL_SMTPS_ID=MailJet Utilisateur (Clé API)
-MAILJET_MAIL_SMTPS_IDHelp=Vérifiez vos paramétre MailJet (Clé API)
+MAILJET_MAIL_SMTPS_IDHelp=Vérifiez vos paramètres MailJet (Clé API)
 MAILJET_MAIL_SMTPS_PW=MailJet Mot de passe (Clé secrète)
-MAILJET_MAIL_SMTPS_PWHelp=Vérifiez vos paramétre MailJet (Clé secrète)
+MAILJET_MAIL_SMTPS_PWHelp=Vérifiez vos paramètres MailJet (Clé secrète)
 MAILJET_MAIL_EMAIL_TLS=Utiliser TLS pour MailJet
-MAILJET_MAIL_EMAIL_TLSHelp=Vérifiez vos paramétre MailJet (TLS)
+MAILJET_MAIL_EMAIL_TLSHelp=Vérifiez vos paramètres MailJet (TLS)
 MAILJET_MAIL_EMAIL_FROM=EMail émetteur pour envoi emails automatiques
 MAILJET_MAIL_EMAIL_FROMHelp=Nous vérifirons que ce mail est validé par MailJet
-MailJetActiveSending=Tout les eMails seront envoyé par MailJet
+MailJetActiveSending=Tout les eMails seront envoyés par MailJet
 MailJetSuccessSave=Configuration sauvegardée
-MailJetDolibarrSettings=La configuration actuel (<a href="%s">Configuration eMail</a>) sera sauvegardée lors de l'activation de cette option.<BR> Pour retrouvé cette configuration d'origine il vous suffit de désactiver le modue par ce boutton.
+MailJetDolibarrSettings=La configuration actuelle (<a href="%s">Configuration eMail</a>) sera sauvegardée lors de l'activation de cette option.<BR> Pour retrouver cette configuration d'origine il vous suffit de désactiver le modue par ce boutton.
 MailJetDolibarrCheckSettings = Allez ici: <a href="%s">Configuration eMail</a> pour tester votre configuration
 MailJetAPIKeyNotSet=Clé API est obligatoire
 MailJetSecretKeyNotSet=Clé secrète est obligatoire
@@ -110,24 +110,36 @@ MailJetContactStatusunsub=Désabonné
 #
 MailJetCreateCampaign = Crée la campagne MailJet
 MailJetUpdateCampaign = Mettre à jour la campagne MailJet
-MailJetNoStdReplacement=Il semble que vous avez utilisé des remplacements Dolibarr standard (%s). Ceci ne fonctionne pas avec MailJet. Les seuls substitutions autorisées sont celles présentes sur l'écran d'édition.
-MailJetNoFileAttached=Les fichiers attachées ne sont pas autorisé dans les mails de campagne MailJet
+MailJetNoStdReplacement=Il semble que vous avez utilisé des remplacements Dolibarr standard (%s). Ceci ne fonctionne pas avec MailJet. Les seules substitutions autorisées sont celles présentes sur l'écran d'édition.
+MailJetNoFileAttached=Les fichiers attachées ne sont pas autorisés dans les mails de campagne MailJet
 MailJetUnsubLinkMandatory=Le lien de désinscription est obligatoire pour les mailing MailJet
-MailJetCannotSendControlNotOK = Vous ne pourrez pas envoyé ce mail avec MailJet, car les/la condition(s) ci-dessus ne sont pas remplie(s).
-MailJetToSendByMailJetGoToMailJet=Pour envoyer ce mailing par une campagne MailJet, aller sur l'onglet MailJet. Sinon il partirons comme des emails MailJet transactionnels
+MailJetCannotSendControlNotOK = Vous ne pourrez pas envoyer ce mail avec MailJet, car les/la condition(s) ci-dessus ne sont pas remplie(s).
+MailJetToSendByMailJetGoToMailJet=Pour envoyer ce mailing par une campagne MailJet, aller sur l'onglet MailJet. Sinon ils partiront comme des emails MailJet transactionnels
 MailJetNotValidated=Votre campagne n'est pas encore validée
 MailJetCampaign=Campagne MailJet
 MailJetCampaignListContact=Liste de(s) contact(s) MailJet
 MailJetSenderName=Nom Prénom de l'envoyeur
 MailJetPermalink=Lien permanant
-MailJetPermalinkHelp=Affiche un lien vers un le site de MailJet pour visualisé correctement le mail si le lecteur à des problémes de visualisation sur son application de lecture de mail. 
+MailJetPermalinkHelp=Affiche un lien vers un le site de MailJet pour visualiser correctement le mail si le lecteur à des problèmes de visualisation sur son application de lecture de mail. 
 MailJetLang=Langue du mail
 MailJetSenderNameMandatory=Nom Prénom de l'envoyeur est obligatoire
 MailJetLangMandatory=Langue du mail est obligatoire
-MailJetSenderNameNotValid=L'eMail de l'émetteur n'est pas valider dans MailJet 
-MailJetSenderNameValid=L'eMail de l'émetteur est valider dans MailJet
+MailJetSenderNameNotValid=L'eMail de l'émetteur n'est pas validé dans MailJet 
+MailJetSenderNameValid=L'eMail de l'émetteur est validé dans MailJet
 MailJetSendMailing=Envoyer la campagne par MailJet
 MailJetStatus=Status MailJet
 MailJetSocialNetworkLink=Reseaux sociaux
 MailJetRefreshStatus=Rafraichir Dolibarr avec les statistique de MailJet
 MailJetNotActive=Le module MailJet est activé mais l'envoie des mails par MailJet est désactivé
+#
+# Statistics
+#
+MailJetStatistics=Statistiques
+MailJetStatisticscto=CTO
+MailJetStatisticsdelivered_rate=Taux délivrée
+MailJetStatisticsopened_rate=Taux ouverts
+MailJetStatisticsclicked_rate =Taux cliqués
+MailJetStatisticsbounce_rate=Taux erreurs bounce
+MailJetStatisticsspam_rate=Taux SPAM
+MailJetStatisticsblocked_rate=Taux blockés
+MailJetStatisticsfailure_rate=Taux erreurs

@@ -21,9 +21,9 @@
  *	\ingroup	mailjet
  */
 
-/*error_reporting(E_ALL);
+error_reporting(E_ALL);
 ini_set('display_errors', true);
-ini_set('html_errors', false);*/
+ini_set('html_errors', false);
 
 $res = 0;
 if (! $res && file_exists("../main.inc.php")) {
