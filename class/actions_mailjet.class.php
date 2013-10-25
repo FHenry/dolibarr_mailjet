@@ -59,7 +59,7 @@ class ActionsMailjet
 		
 		global $langs,$conf;
 		
-		if (!empty($conf->global->MAILJET_ACTIVE) && in_array('mailingcard',$hookmanager->contextarray)) {
+		if ((!empty($conf->global->MAILJET_ACTIVE) || !empty($conf->global->MAILJET_ACTIVE_MAILING_ONLY)) && in_array('mailingcard',$hookmanager->contextarray)) {
 			
 			$langs->load("mailjet@mailjet");
 				

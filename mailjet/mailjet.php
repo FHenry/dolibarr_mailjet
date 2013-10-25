@@ -21,10 +21,6 @@
  *	\ingroup	mailjet
  */
 
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-ini_set('html_errors', false);
-
 $res = 0;
 if (! $res && file_exists("../main.inc.php")) {
 	$res = @include("../main.inc.php");
@@ -279,7 +275,7 @@ $head = emailing_prepare_head($object);
 
 dol_fiche_head($head, 'tabMailJetSending', $langs->trans("MailJet"), 0, 'email');
 
-if (!empty($conf->global->MAILJET_ACTIVE)) {
+if (!empty($conf->global->MAILJET_ACTIVE) || !empty($conf->global->MAILJET_ACTIVE_MAILING_ONLY)) {
 
 
 

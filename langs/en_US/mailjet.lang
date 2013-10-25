@@ -68,6 +68,8 @@ MAILJET_MAIL_EMAIL_TLSHelp=Check your MailJet account setting (TLS)
 MAILJET_MAIL_EMAIL_FROM=Default mail sender
 MAILJET_MAIL_EMAIL_FROMHelp=We will check if this mail is registered as valid email dress for MailJet
 MailJetActiveSending=All e-mails will be send throught MailJet
+MailJetActiveSendingForMailingOnly=All e-mails will be send by your STMP server congurated into Configuration->Email
+MailJetActiveSendingForMailingOnlyHelp= The e-mail configuration do not change, The mailjet module will be use only to see MailJet campaign
 MailJetSuccessSave=Setup saved
 MailJetDolibarrSettings=The current mailing setting <a href="%s">Dolibarr eMail Setting</a> will be saved when this options is activated and will be replace by the MailJet values.<BR> If you want to retreive the original value just inactivate this switch. 
 MailJetDolibarrCheckSettings = Go to <a href="%s">Dolibarr eMail Setting</a> to test your configuration

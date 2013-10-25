@@ -139,6 +139,10 @@ if ($action=='mailjetactiv') {
 			
 			$res =dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS", 0,'chaine',0,'',0);
 			if (! $res > 0) $error++;
+			
+			if (!empty($conf->global->MAILJET_ACTIVE_MAILING_ONLY)) {
+				$res = dolibarr_set_const($db, 'MAILJET_ACTIVE_MAILING_ONLY', 0,'chaine',0,'',$conf->entity);
+			}
 		}
 	}
 	
@@ -146,6 +150,32 @@ if ($action=='mailjetactiv') {
 		setEventMessage('Error','errors');
 	}else {
 		setEventMessage($langs->trans('MailJetSuccessSave'),'mesgs');
+	}
+}
+
+if ($action=='activmailjetmailingonly') {
+
+	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE_MAILING_ONLY', $value,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+
+	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', 0,'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	
+	if ($value==0) {
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", $conf->global->MAILJET_MAIL_SENDMODE_STD,'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   $conf->global->MAILJET_SMTP_PORT_STD,'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER", $conf->global->MAILJET_MAIL_SMTP_SERVER_STD,'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",    $conf->global->MAILJET_MAIL_SMTPS_ID_STD, 'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",   $conf->global->MAILJET_MAIL_SMTPS_PW_STD, 'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",   $conf->global->MAILJET_MAIL_EMAIL_TLS_STD,'chaine',0,'',0);
+		if (! $res > 0) $error++;
+		$res =dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",   $conf->global->MAILJET_MAIL_EMAIL_FROM_STD,'chaine',0,'',0);
+		if (! $res > 0) $error++;
 	}
 }
 
@@ -307,6 +337,31 @@ print '</form>';
 if (! empty($conf->global->MAILJET_ACTIVE)) {
 	dol_htmloutput_mesg($langs->trans("MailJetDolibarrCheckSettings",dol_buildpath('/admin/mails.php',1).'?mainmenu=home&leftmenu=setup'),'','ok',1);	
 }
+
+print $langs->trans('or');
+dol_htmloutput_mesg($langs->trans("MailJetActiveSendingForMailingOnlyHelp"),'','warning',1);
+print '<table class="noborder" width="100%">';
+
+print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="activmailjetmailingony">';
+
+print '<tr class="liste_titre">';
+print '<td width="40%">'.$langs->trans("MailJetActiveSendingForMailingOnly").'</td>';
+print '<td align="center">';
+if (!empty($conf->global->MAILJET_ACTIVE_MAILING_ONLY)) {
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=activmailjetmailingonly&value=0">';
+	print img_picto($langs->trans("Disabled"),'switch_on');
+	print "</a></td>\n";
+}else {
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=activmailjetmailingonly&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+	print "</a></td>\n";
+}
+print '</td>';
+print '</tr>';
+print '</table>';
+print '</form>';
 
 llxFooter();
 $db->close();

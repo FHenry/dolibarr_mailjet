@@ -50,3 +50,7 @@ For all:
 For all:
 	- Fix pgSQL bug
 	- Set comptability for dolibarr 3.4
+	
+**** ChangeLog for 1.12 compared to 1.11 *****
+For all:
+	- Add option to just manage email campaign without change global dolibarr SMTP

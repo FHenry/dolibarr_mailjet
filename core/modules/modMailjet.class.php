@@ -211,6 +211,15 @@ class modMailjet extends DolibarrModules
 					0,
 					'current',
 					0
+				),
+				15=>array(
+					'MAILJET_ACTIVE_MAILING_ONLY',
+					'chaine',
+					'0',
+					'Module is active only for mailing',
+					0,
+					'current',
+					1
 				)
 		);
 
