@@ -54,3 +54,8 @@ For all:
 **** ChangeLog for 1.12 compared to 1.11 *****
 For all:
 	- Add option to just manage email campaign without change global dolibarr SMTP
+	
+**** ChangeLog for 1.13 compared to 1.12 *****
+For all:
+	- Fix french spelling
+	- Fix when STMP to use is dolibarr SMTP dolibarr contast are reset to normal ones 

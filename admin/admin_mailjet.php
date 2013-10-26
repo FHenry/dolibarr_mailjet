@@ -157,11 +157,12 @@ if ($action=='activmailjetmailingonly') {
 
 	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE_MAILING_ONLY', $value,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-
-	$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', 0,'chaine',0,'',$conf->entity);
-	if (! $res > 0) $error++;
 	
-	if ($value==0) {
+	if (!empty($conf->global->MAILJET_ACTIVE)) {
+		
+		$res = dolibarr_set_const($db, 'MAILJET_ACTIVE', 0,'chaine',0,'',$conf->entity);
+		if (! $res > 0) $error++;
+		
 		$res =dolibarr_set_const($db, "MAIN_MAIL_SENDMODE", $conf->global->MAILJET_MAIL_SENDMODE_STD,'chaine',0,'',0);
 		if (! $res > 0) $error++;
 		$res =dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",   $conf->global->MAILJET_SMTP_PORT_STD,'chaine',0,'',0);
