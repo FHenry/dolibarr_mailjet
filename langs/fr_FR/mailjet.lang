@@ -69,7 +69,7 @@ MAILJET_MAIL_EMAIL_FROM=EMail émetteur pour envoi emails automatiques
 MAILJET_MAIL_EMAIL_FROMHelp=Nous vérifirons que ce mail est validé par MailJet
 MailJetActiveSending=Tout les eMails seront envoyés par MailJet
 MailJetActiveSendingForMailingOnly=Tout vos email continueront de partir du SMTP définie dans la configuration Dolibarr.
-MailJetActiveSendingForMailingOnlyHelp= La configuration Email Dolibarr reste telle quelle, le module ne vous servira qu'a visualiser/crée/vérifier wos campagne MailJet
+MailJetActiveSendingForMailingOnlyHelp= La configuration Email Dolibarr reste tel quel, le module ne vous serviras qu'a visualiser/crée/vérifier vos campagnes MailJet
 MailJetSuccessSave=Configuration sauvegardée
 MailJetDolibarrSettings=La configuration actuelle (<a href="%s">Configuration eMail</a>) sera sauvegardée lors de l'activation de cette option.<BR> Pour retrouver cette configuration d'origine il vous suffit de désactiver le modue par ce boutton.
 MailJetDolibarrCheckSettings = Allez ici: <a href="%s">Configuration eMail</a> pour tester votre configuration
@@ -121,7 +121,7 @@ MailJetNotValidated=Votre campagne n'est pas encore validée
 MailJetCampaign=Campagne MailJet
 MailJetCampaignListContact=Liste de(s) contact(s) MailJet
 MailJetSenderName=Nom Prénom de l'envoyeur
-MailJetPermalink=Lien permanant
+MailJetPermalink=Lien permanent
 MailJetPermalinkHelp=Affiche un lien vers un le site de MailJet pour visualiser correctement le mail si le lecteur à des problèmes de visualisation sur son application de lecture de mail. 
 MailJetLang=Langue du mail
 MailJetSenderNameMandatory=Nom Prénom de l'envoyeur est obligatoire
