@@ -1168,7 +1168,7 @@ class DolMailjet extends CommonObject
 
 		$substitutionarray=array(
 			'[[UNSUB_LINK_EN]]' => '<a href="[[UNSUB_LINK_EN]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-			'[[UNSUB_LINK_FR]]' => '<a href="[[UNSUB_LINK_EN]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
+			'[[UNSUB_LINK_FR]]' => '<a href="[[UNSUB_LINK_FR]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 			'[[UNSUB_LINK_DE]]' => '<a href="[[UNSUB_LINK_DE]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 			'[[UNSUB_LINK_ES]]' => '<a href="[[UNSUB_LINK_ES]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
 			'[[UNSUB_LINK_NL]]' => '<a href="[[UNSUB_LINK_NL]]" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
