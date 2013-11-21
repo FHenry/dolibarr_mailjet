@@ -229,7 +229,7 @@ class modMailjet extends DolibarrModules
 		);
 
 		if (! isset($conf->mailjet->enabled)) {
-			$conf->agefodd = (object) array();
+			$conf->mailjet = (object) array();
 			$conf->mailjet->enabled = 0;
 		}
 		$this->dictionnaries = array();
