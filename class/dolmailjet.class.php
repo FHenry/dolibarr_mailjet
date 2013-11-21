@@ -983,7 +983,7 @@ class DolMailjet extends CommonObject
 				}
 				return $sender_found;
 			}
-		}else {return true;}
+		}else {return false;}
 	}
 
 
