@@ -63,3 +63,4 @@ For all:
 **** ChangeLog for 1.14 compared to 1.13 *****
 For all:
 	- Fix UNSUB_LINK_FR replacement
+	- Fix test on email validity into admin
