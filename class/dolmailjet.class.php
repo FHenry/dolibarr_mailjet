@@ -22,7 +22,9 @@
 
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
-dol_include_once("/mailjet/class/php-mailjet.class-mailjet-0.1.php");
+dol_include_once('/mailjet/class/mailjet-apiv3-php/vendor/autoload.php');
+use Mailjet\Api as MailjetApi;
+use Mailjet\Model\Apitoken;
 
 
 /**
@@ -91,13 +93,8 @@ class DolMailjet extends CommonObject
 				return -1;
 			}
 
-			$mailjet = new Mailjet($conf->global->MAILJET_MAIL_SMTPS_ID,$conf->global->MAILJET_MAIL_SMTPS_PW);
-
-			$mailjet->debug=0;
-
-			//$mailjet->debug=1; //Errors only
-
-			//$mailjet->debug=2; //For debug session
+			$mailjet =new MailjetApi\Api($conf->global->MAILJET_MAIL_SMTPS_ID,$conf->global->MAILJET_MAIL_SMTPS_PW);
+			 //new Mailjet();
 
 			$this->mailjet=$mailjet;
 		}
@@ -946,7 +943,6 @@ class DolMailjet extends CommonObject
 	 * 	@return	int			 		<0 if KO, >0 if OK
 	 */
 	function checkMailSender($mail_sender='') {
-
 		if (!empty($mail_sender) && isValidEmail($mail_sender)) {
 			//Get Current MailJetInstace
 			$result=$this->getInstanceMailJet();
@@ -956,16 +952,16 @@ class DolMailjet extends CommonObject
 			}
 
 			# Call
-			$response = $this->mailjet->userSenderlist();
+			$response = $this->mailjet->sender()->getList();
+			$emailsenders_array=$response->getDataSource();
 			if ($response===false) {
 				$this->error=print_r($this->mailjet->_response,true);
 				dol_syslog(get_class($this)."::checkMailSender Error".$this->error, LOG_ERR);
 				return -1;
 			}else {
 				$sender_found=false;
-				foreach($response->senders as $obj) {
-						
-					if ($mail_sender==$obj->email){
+				foreach($emailsenders_array as $obj) {
+					if ($mail_sender==$obj['Email']){
 						$sender_found=true;
 						break;
 					}
