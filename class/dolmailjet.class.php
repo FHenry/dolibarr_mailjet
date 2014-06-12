@@ -94,7 +94,8 @@ class DolMailjet extends CommonObject
 			}
 
 			$mailjet =new MailjetApi\Api($conf->global->MAILJET_MAIL_SMTPS_ID,$conf->global->MAILJET_MAIL_SMTPS_PW);
-			 //new Mailjet();
+			var_dump($mailjet);
+			
 
 			$this->mailjet=$mailjet;
 		}
@@ -952,8 +953,10 @@ class DolMailjet extends CommonObject
 			}
 
 			# Call
+			//$response = $this->mailjet->sender()->getByEmail($mail_sender);
 			$response = $this->mailjet->sender()->getList();
-			$emailsenders_array=$response->getDataSource();
+			var_dump($response);
+			//$emailsenders_array=$response->getDataSource();
 			if ($response===false) {
 				$this->error=print_r($this->mailjet->_response,true);
 				dol_syslog(get_class($this)."::checkMailSender Error".$this->error, LOG_ERR);
