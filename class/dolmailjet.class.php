@@ -22,6 +22,8 @@
 
 // Put here all includes required by your class file
 require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
+//dol_include_once("/mailjet/class/php-mailjet.class-mailjet-0.1.php");
+//dol_include_once("/mailjet/class/php-mailjet-v3-simple.class.php");
 dol_include_once('/mailjet/class/mailjet-apiv3-php/vendor/autoload.php');
 use Mailjet\Api as MailjetApi;
 use Mailjet\Model\Apitoken;
