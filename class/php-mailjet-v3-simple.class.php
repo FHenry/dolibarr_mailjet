@@ -7,10 +7,18 @@
  * @author      Mailjet
  * @link        http://api.mailjet.com/
  *
+ * For PHP v >= 5.3
+ *
  */
 
 class Mailjet
 {
+    # Wrapper version, changed for each release
+    const WRAPPER_VERSION = '1.0.8';
+
+    # Mailjet API version
+    var $version = 'v3';
+
     # Connect with https protocol
     var $secure = true;
 
@@ -20,36 +28,168 @@ class Mailjet
     # Edit with your Mailjet API keys (you can find them here : https://app.mailjet.com/account/api_keys)
     var $apiKey = '';
     var $secretKey = '';
-    
+
+    // Ressources arrays
+
+    /*
+     *  Newsletter resources
+     */
+    private static $_newsletterResources = array(
+        "newsletterDetailContent",
+        "newsletterSend",
+        "newsletterSchedule",
+        "newsletterTest",
+        "newsletterStatus"
+    );
+
+    /*
+     * Contact resources
+     *  "contactManageManyContacts" not in as it is a special case.
+     */
+    private static $_contactResources = array(
+        "contactManageContactsLists",
+        "contactGetContactsLists"
+    );
+
+    /*
+     *  Contactslist resources
+     */
+    private static $_contactslistResources = array (
+        "contactslistManageContact",
+        "contactslistManageManyContacts"
+    );
+
     # Constructor function
-    public function __construct($apiKey = false, $secretKey = false)
+    public function __construct($apiKey = false, $secretKey = false, $preprod = false)
     {
-        if ($apiKey)
+        if ($apiKey) {
             $this->apiKey = $apiKey;
-        if ($secretKey)
+        }
+        if ($secretKey) {
             $this->secretKey = $secretKey;
-        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
+        }
+        $this->apiUrl = $this->getApiUrl($preprod);
+        $this->wrapperVersion = $this->readWrapperVersion();
     }
-    
+
+    private function getApiUrl ($preprod)
+    {
+        if ($preprod)
+        {
+            return (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/' . $this->version . '0';
+        }
+        else
+        {
+            return (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/' . $this->version;
+        }
+    }
+
+    public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
+        $algos = hash_algos();
+        $hashAlgo = null;
+
+        foreach (array('sha1', 'md5') as $preferred) {
+            if (in_array($preferred, $algos)) {
+                $hashAlgo = $preferred;
+                break;
+            }
+        }
+
+        if ($hashAlgo === null) {
+            list($hashAlgo) = $algos;
+        }
+
+        $boundary =
+            '----------------------------' .
+            substr(hash($hashAlgo, 'cURL-php-multiple-value-same-key-support' . microtime()), 0, 12);
+
+        $body = array();
+        $crlf = "\r\n";
+
+        foreach ($postfields as $key => $value) {
+            // attachment
+            if (is_array($value)) {
+                foreach ($value as $filename => $path) {
+                    if (strpos($path, '@') === 0) {
+                        preg_match('/^@(.*?)$/', $path, $matches);
+                        list($dummy, $path) = $matches;
+
+                        if (is_int($filename)) {
+                            $filename = basename($path);
+                        }
+
+                        $body[] = '--' . $boundary;
+                        $body[] = 'Content-Disposition: form-data; name="' . $key . '"; filename="' . $filename . '"';
+                        $body[] = 'Content-Type: application/octet-stream';
+                        $body[] = '';
+                        $body[] = file_get_contents($path);
+                    }
+                }
+            }
+            else {
+                $body[] = '--' . $boundary;
+                $body[] = 'Content-Disposition: form-data; name="' . $key . '"';
+                $body[] = '';
+                $body[] = $value;
+            }
+        }
+
+        $body[] = '--' . $boundary . '--';
+        $body[] = '';
+        $contentType = 'multipart/form-data; boundary=' . $boundary;
+        $content = join($crlf, $body);
+        $contentLength = strlen($content);
+
+        curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+            'Content-Length: ' . $contentLength,
+            'Expect: 100-continue',
+            'Content-Type: ' . $contentType,
+        ));
+
+        curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $content);
+    }
+
     public function __call($resource, $args)
     {
         # Parameters array
         $params  = (sizeof($args) > 0) ? $args[0] : array();
 
         # Request method, GET by default
-        $request = isset($params["method"]) ? strtoupper($params["method"]) : 'GET';
+        if (isset($params["method"]))
+        {
+            $request = strtoupper($params["method"]);
+            unset($params['method']);
+        }
+        else
+        {
+            $request = 'GET';
+        }
 
         # Request ID, empty by default
-        $id      = isset($params["ID"]) ? $params["ID"] : '';
+        $id = isset($params["ID"]) ? $params["ID"] : '';
 
-        # Unset useless params
-        if (isset($params["method"]))
-            unset($params["method"]);
-        if (isset($params["ID"]))
-            unset($params["ID"]);
+        /*
+            Using SendAPI without the "to" parameter but with "cc" AND/OR "bcc"
+            Our API needs the "to" parameter filled to send email
+            We give it a default value with an email @example.org. See http://en.wikipedia.org/wiki/Example.com
+        */
+        if ($resource == "sendEmail" && (empty($params["to"]) && (!empty($params["cc"]) || !empty($params["bcc"])))) {
+            $params["to"] = "mailjet@example.org";
+        }
 
-        # Make request
-        $result = $this->sendRequest($resource, $params, $request, $id);
+        if ($id == '')
+        {
+            # Request Unique field, empty by default
+            $unique  = isset($params["unique"]) ? $params["unique"] : '';
+            unset($params["unique"]);
+            # Make request
+            $result = $this->sendRequest($resource, $params, $request, $unique);
+        }
+        else
+        {
+            # Make request
+            $result = $this->sendRequest($resource, $params, $request, $id);
+        }
 
         # Return result
         $return = ($result === true) ? $this->_response : false;
@@ -60,55 +200,195 @@ class Mailjet
         return $return;
     }
 
+    /**
+     *
+     *  @param string   $method         REST or DATA
+     *  @param string   $resourceBase   Base resource
+     *  @param int      $resourceID     Base resource ID
+     *  @param string   $action         Action on resource
+     *
+     *  @return string Returns the call's url.
+     */
+    private function makeUrl($method, $resourceBase, $resourceID, $action)
+    {
+        return $this->apiUrl.'/'.$method.'/'.$resourceBase.'/'.$resourceID.'/'.strtolower($action);
+    }
+
+    /**
+     *
+     *  @param string   $method         REST or DATA
+     *  @param string   $resourceBase   Base resource
+     *  @param int      $resourceID     Base resource ID
+     *  @param string   $resource       The whole resource, before parsing
+     *
+     *  @return string Returns the call's url.
+     */
+    private function makeUrlFromFilter($method, $resourceBase, $resourceID, $resource)
+    {
+        $matches = array();
+        preg_match('/'.$resourceBase.'([a-zA-Z]+)/', $resource, $matches);
+
+        $action = $matches[1];
+        return $this->makeUrl($method, $resourceBase, $resourceID, $action);
+    }
+
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
-        foreach ($params as $key => $value) {
-            if ($request == "GET")
-                $query_string[$key] = $key . '=' . urlencode($value);
+        if ($resource == "sendEmail") {
+            $this->call_url = $this->apiUrl."/send/message";
+        }
+        else if ($resource == "uploadCSVContactslistData") {
+          if (!empty($params['_contactslist_id'])) {
+            $contactslist_id = $params['_contactslist_id'];
+          }
+          else if (!empty($params['ID'])) {
+            $contactslist_id = $params['ID'];
+          }
+          $this->call_url = $this->makeUrl('DATA', 'Contactslist', $contactslist_id, 'CSVData/text:plain');     // Was $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
+        }
+        else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
+            if (!empty($params['_newsletter_id'])) {
+                $newsletter_id = $params['_newsletter_id'];
+            }
+            else if (!empty($params['ID'])) {
+                $newsletter_id = $params['ID'];
+            }
+            $this->call_url = $this->makeUrl('DATA', 'NewsLetter', $newsletter_id, 'HTML/text/html/LAST');
+        }
+        else if (in_array($resource, self::$_newsletterResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
+        }
+        else if (in_array($resource, self::$_contactResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
+        }
+        else if ($resource == "contactManageManyContacts")
+        {
+            $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
+        }
+        else if (in_array($resource, self::$_contactslistResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
+        }
+        else if ($resource == "newsletter" && array_key_exists('ID', $params) && !empty($params['ID']))
+        {
+        	 $this->call_url = $this->apiUrl . '/REST/' . $resource . '/'. $params['ID'];
+        }
+        else {
+            $this->call_url = $this->apiUrl . '/REST/' . $resource;
         }
 
-        if ($resource == "sendEmail")
-            $this->call_url = "https://api.mailjet.com/v3/send/message";
-        else
-            $this->call_url = $this->apiUrl . '/' . $resource;
+        if ($request == "GET" || $request == "POST") {
+            if (count($params) > 0)
+            {
+                $this->call_url .= '?';
 
-        if ($request == "VIEW" || $request == "DELETE" || $request == "PUT")
+                foreach ($params as $key => $value) {
+                    // In a GET request, put an underscore char in front of params to avoid it being treated as a filter
+                    $firstChar = substr($key, 0, -(strlen($key) - 1));
+
+                    if ($request == "GET") {
+                        $okFirstChar = ($firstChar != "_");
+                        $queryStringKey = $key;
+                    }
+                    else {
+                        $okFirstChar = ($firstChar == "_");
+                        $queryStringKey = substr($key, 1);
+                    }
+
+                    if ($okFirstChar && ($key != "ID"))
+                    {
+                        $query_string[$queryStringKey] = $queryStringKey . '=' . $value;
+                        $this->call_url .= $query_string[$queryStringKey] . '&';
+                    }
+                }
+
+                $this->call_url = substr($this->call_url, 0, -1);
+            }
+        }
+
+        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "addHTMLbody" && $resource != "uploadCSVContactslistData")
+        {
             if ($id != '')
-                $this->call_url .= '/' . $id;
+            {
+                if ($resource == "contactslistManageManyContacts")
+                {
+                    $this->call_url .= '/' . $params["JobID"];
+                }
+                else
+                {
+                    $this->call_url .= '/' . $id;
+                }
+            }
+        }
 
         return $this->call_url;
     }
-    
+
     public function sendRequest($resource = false, $params = array(), $request = "GET", $id = '')
     {
         # Method
         $this->_method  = $resource;
         $this->_request = $request;
-        
+
         # Build request URL
         $url = $this->requestUrlBuilder($resource, $params, $request, $id);
 
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion . '; PHP v. ' . phpversion());
         curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl_handle, CURLOPT_USERPWD, $this->apiKey . ':' . $this->secretKey);
-        
+
         $this->_request_post = false;
 
         if (($request == 'POST') || ($request == 'PUT')):
-            curl_setopt($curl_handle, CURLOPT_POST, count($params));
-            if ($resource == "sendEmail")
+            curl_setopt($curl_handle, CURLOPT_POST, 1);
+
+            // Exclude filters from payload. See http://stackoverflow.com/questions/4260086/php-how-to-use-array-filter-to-filter-array-keys 
+            $paramsFiltered = array_filter(array_keys($params), function($k) {
+                return substr($k, 0, 1) != '_';
+            });
+            $params = array_intersect_key($params, array_flip($paramsFiltered));
+
+            if ($this->debug == 2) {
+                var_dump($params);
+            }
+
+            if ($resource == "sendEmail") {
+                $this->curl_setopt_custom_postfields($curl_handle, $params);
+            }
+            else if ($resource == "addHTMLbody")
             {
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, http_build_query($params));
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['html_content']);
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
-                    'Content-Type: application/x-www-form-urlencoded'
+                    'Content-Type: text/html'
                 ));
             }
+            //
+            else if ($resource == "uploadCSVContactslistData")
+            {
+              curl_setopt($curl_handle, CURLOPT_BINARYTRANSFER, TRUE);
+              curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['csv_content']);
+              curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                'Content-Type: text/plain'
+              ));
+            }
+            //
             else
             {
+                if ((in_array($resource, self::$_newsletterResources)) ||
+                    ($resource == "contactManageContactsLists") ||
+                    ($resource == "contactManageManyContacts") ||
+                    (in_array($resource, self::$_contactslistResources)))
+                {
+                    unset($params['ID']);
+                }
+
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
@@ -124,11 +404,12 @@ class Mailjet
         if ($request == 'PUT') {
             curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
         }
-
-        $buffer = curl_exec($curl_handle);
         
-        if ($this->debug == 2)
+        $buffer = curl_exec($curl_handle);
+
+        if ($this->debug == 2) {
             var_dump($buffer);
+        }
 
         # Response code
         $this->_response_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
@@ -137,15 +418,33 @@ class Mailjet
         curl_close($curl_handle);
 
         # Return response
-        $this->_response = json_decode($buffer);
+        if (($this->_response_code == 200) && ($resource == "getHTMLbody")) {
+            $this->_response = $buffer;
+        }
+        else
+        {
+            /*
+             *  This prevents the rounding error on 32 bits systems with PHP version >= 5.4
+             */
+            if (defined('JSON_BIGINT_AS_STRING') && (!version_compare(PHP_VERSION,'5.4', '>=')))
+            {
+                $this->_response = json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
+            }
+            else
+            {   // PHP v <= 5.3.* doens't support the fourth parameter of json_decode
+                $this->_response = json_decode($buffer, false, 512);
+            }
+        }
 
-        if ($request == 'POST')
-            return ($this->_response_code == 201) ? true : false;
-        if ($request == 'DELETE')
+        if ($request == 'POST') {
+            return ($this->_response_code == 201 || $this->_response_code == 200) ? true : false;
+        }
+        if ($request == 'DELETE') {
             return ($this->_response_code == 204) ? true : false;
+        }
         return ($this->_response_code == 200) ? true : false;
     }
-    
+
     public function debug()
     {
         echo '<style type="text/css">';
@@ -162,19 +461,19 @@ class Mailjet
 
         ';
         echo '</style>';
-        
+
         echo '<div id="debugger">';
-        
+
         if (isset($this->_response_code)):
             if (($this->_response_code == 200) || ($this->_response_code == 201) || ($this->_response_code == 204)):
                 echo '<table>';
                 echo '<tr class="Success"><th>Success</th><td></td></tr>';
                 echo '<tr><th>Status code</th><td>' . $this->_response_code . '</td></tr>';
-                
+
                 if (isset($this->_response)):
                     echo '<tr><th>Response</th><td><pre>' . utf8_decode(print_r($this->_response, 1)) . '</pre></td></tr>';
                 endif;
-                
+
                 echo '</table>';
             elseif ($this->_response_code == 304):
                 echo '<table>';
@@ -196,16 +495,16 @@ class Mailjet
                 echo '</table>';
             endif;
         endif;
-        
+
         $call_url = parse_url($this->call_url);
-        
+
         echo '<table>';
         echo '<tr class="h"><th>API config</th><td></td></tr>';
         echo '<tr><th>Protocole</th><td>' . $call_url['scheme'] . '</td></tr>';
         echo '<tr><th>Host</th><td>' . $call_url['host'] . '</td></tr>';
         echo '<tr><th>Version</th><td>' . $this->version . '</td></tr>';
         echo '</table>';
-        
+
         echo '<table>';
         echo '<tr class="h"><th>Call infos</th><td></td></tr>';
         echo '<tr><th>Resource</th><td>' . $this->_method . '</td></tr>';
@@ -224,17 +523,31 @@ class Mailjet
 
         if ($this->_request_post) {
             echo '<tr><th>Post Arguments</th><td>';
-            
+
             foreach ($this->_request_post as $k => $v) {
-                echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
+                if (is_array($v))
+                {
+                    foreach ($v as $key => $value)
+                    {
+                        echo $key . ' = <span style="color:#ff6e56;">' . $value . '</span><br/>';
+                    }
+                }
+                else
+                {
+                    echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
+                }
             }
-            
+
             echo '</td></tr>';
         }
-        
+
         echo '<tr><th>Call url</th><td>' . $this->call_url . '</td></tr>';
         echo '</table>';
-        
+
         echo '</div>';
+    }
+
+    private function readWrapperVersion() {
+        return Mailjet::WRAPPER_VERSION;
     }
 }

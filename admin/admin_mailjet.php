@@ -32,7 +32,7 @@ if (! $res) {
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once "../lib/mailjet.lib.php";
-dol_include_once('/mailjet/class/dolmailjet.class.php');
+dol_include_once('/mailjet/class/dolmailjet_v'.$conf->global->MAILJET_API_VERSION.'.class.php');
 
 // Translations
 $langs->load("mailjet@mailjet");
@@ -54,6 +54,8 @@ $error=0;
  */
 
 if ($action == 'setvar') {		
+	$res = dolibarr_set_const($db, 'MAILJET_API_VERSION', GETPOST('MAILJET_API_VERSION'),'chaine',0,'',$conf->entity);
+	if (! $res > 0) $error++;
 	$res = dolibarr_set_const($db, 'MAILJET_MAIL_SMTP_SERVER', GETPOST('MAILJET_MAIL_SMTP_SERVER'),'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 	$res = dolibarr_set_const($db, 'MAILJET_SMTP_PORT', GETPOST('MAILJET_SMTP_PORT'),'chaine',0,'',$conf->entity);
@@ -229,6 +231,15 @@ print '<td></td>';
 print "</tr>\n";
 
 //MAILJET_MAIL_SMTP_SERVER
+print '<tr class="impair"><td>'.$langs->trans("MAILJET_API_VERSION").'</td>';
+print '<td align="left">';
+print '<SELECT calss="flat" name="MAILJET_API_VERSION"><OPTION value="1" '.($conf->global->MAILJET_API_VERSION==1?'selected="selected"':'').'>1</OPTION><OPTION value="3" '.($conf->global->MAILJET_API_VERSION==3?'selected="selected"':'').'>3</OPTION></SELECT></td>';
+print '<td align="left">';
+print $form->textwithpicto('',$langs->trans("MAILJET_API_VERSIONHelp"),1,'help');
+print '</td>';
+print '</tr>';
+
+//MAILJET_MAIL_SMTP_SERVER
 print '<tr class="pair"><td>'.$langs->trans("MAILJET_MAIL_SMTP_SERVER").'</td>';
 print '<td align="left">';
 print '<input type="text" name="MAILJET_MAIL_SMTP_SERVER" value="'.$conf->global->MAILJET_MAIL_SMTP_SERVER.'" size="30" ></td>';
@@ -276,34 +287,36 @@ print $form->textwithpicto('',$langs->trans("MAILJET_MAIL_EMAIL_TLSHelp"),1,'hel
 print '</td>';
 print '</tr>';
 
-//MAILJET_MAIL_EMAIL_FROM
-print '<tr class="pair"><td>'.$langs->trans("MAILJET_MAIL_EMAIL_FROM").'</td>';
-print '<td align="left">';
-print '<input type="text" name="MAILJET_MAIL_EMAIL_FROM" value="'.$conf->global->MAILJET_MAIL_EMAIL_FROM.'" size="20" ></td>';
-print '<td align="left">';
-if (!empty($conf->global->MAILJET_MAIL_EMAIL_FROM)) {
-	if (!isValidEmail($conf->global->MAILJET_MAIL_EMAIL_FROM)) {
-		$langs->load("errors");
-		print img_warning($langs->trans("ErrorBadEMail",$conf->global->MAILJET_MAIL_EMAIL_FROM));
-	} else {
-		$mailjet= new DolMailjet($db);
-		$result=$mailjet->checkMailSender($conf->global->MAILJET_MAIL_EMAIL_FROM);
-		if ($result<0) {
-			setEventMessage($mailjet->errors,'errors');
-		}else {
-			if (!$result) {
-				print '<a href="http://www.mailjet.com/account/sender" target="_blank">'.img_warning($langs->transnoentities("MailJetSenderNameNotValid")).'</a>';
+if (!empty($conf->global->MAILJET_API_VERSION)) {
+	//MAILJET_MAIL_EMAIL_FROM
+	print '<tr class="pair"><td>'.$langs->trans("MAILJET_MAIL_EMAIL_FROM").'</td>';
+	print '<td align="left">';
+	print '<input type="text" name="MAILJET_MAIL_EMAIL_FROM" value="'.$conf->global->MAILJET_MAIL_EMAIL_FROM.'" size="20" ></td>';
+	print '<td align="left">';
+	if (!empty($conf->global->MAILJET_MAIL_EMAIL_FROM)) {
+		if (!isValidEmail($conf->global->MAILJET_MAIL_EMAIL_FROM)) {
+			$langs->load("errors");
+			print img_warning($langs->trans("ErrorBadEMail",$conf->global->MAILJET_MAIL_EMAIL_FROM));
+		} else {
+			$mailjet= new DolMailjet($db);
+			$result=$mailjet->checkMailSender($conf->global->MAILJET_MAIL_EMAIL_FROM);
+			if ($result<0) {
+				setEventMessage($mailjet->errors,'errors');
 			}else {
-				print img_picto_common($langs->transnoentities("MailJetSenderNameValid"), 'redstar');
+				if (!$result) {
+					print '<a href="http://www.mailjet.com/account/sender" target="_blank">'.img_warning($langs->transnoentities("MailJetSenderNameNotValid")).'</a>';
+				}else {
+					print img_picto_common($langs->transnoentities("MailJetSenderNameValid"), 'redstar');
+				}
 			}
 		}
 	}
+	else {
+		print $form->textwithpicto('',$langs->trans("MAILJET_MAIL_EMAIL_FROMHelp"),1,'help');
+	}
+	print '</td>';
+	print '</tr>';
 }
-else {
-	print $form->textwithpicto('',$langs->trans("MAILJET_MAIL_EMAIL_FROMHelp"),1,'help');
-}
-print '</td>';
-print '</tr>';
 
 print '<tr class="liste_titre"><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 

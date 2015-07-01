@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-dol_include_once('/mailjet/class/dolmailjet.class.php');
+dol_include_once('/mailjet/class/dolmailjet_v'.$conf->global->MAILJET_API_VERSION.'.class.php');
 
 // Load translation files required by the page
 $langs->load("mailjet@mailjet");
@@ -253,6 +253,9 @@ if ($action=='sendmailjetcampaign') {
 }
 
 if ($action=='refreshstatus') {
+	
+	$mailjet->currentmailing=$object;
+	
 	//Update inforamtion from mailjet
 	$result=$mailjet->updateMailJetCampaignAttr($user);
 	if ($result<0) {
@@ -356,9 +359,9 @@ print '</tr>';
 
 // MailJet lang
 print '<tr><td width="15%">';
-print $form->editfieldkey("MailJetLang",'mailjet_lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
+print $form->editfieldkey("MailJetLang",'mailjet_lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en_US,fr:fr_FR,de:de_DE,it:it_IT,es:es_ES,nl:nl_NL');
 print '</td><td colspan="3">';
-print $form->editfieldval("MailJetLang",'mailjet_lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en,fr:fr,de:de,it:it,es:es,nl:nl');
+print $form->editfieldval("MailJetLang",'mailjet_lang',$mailjet->mailjet_lang,$object,$user->rights->mailing->creer && $object->statut < 3  && empty($mailjet->mailjet_id),'select;en:en_US,fr:fr_FR,de:de_DE,it:it_IT,es:es_ES,nl:nl_NL');
 print '</td>';
 print '</tr>';
 
@@ -451,7 +454,7 @@ if (!empty($mailjet->mailjet_id)) {
 		if (!empty($mailjet->mailjet_id)) {
 			print '<a href="'.$mailjet->mailjet_url.'" target="_blank">MailJet</a>';
 		}
-	}else {
+	}elseif (!empty($mailjet->mailjet_stat_id)) {
 		print '<a href="http://www.mailjet.com'.$mailjet->mailjet_uri.'" target="_blank">MailJet Stats.</a>';
 	}
 	print '</td></tr>';

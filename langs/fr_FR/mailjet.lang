@@ -75,6 +75,9 @@ MailJetDolibarrSettings=La configuration actuelle (<a href="%s">Configuration eM
 MailJetDolibarrCheckSettings = Allez ici: <a href="%s">Configuration eMail</a> pour tester votre configuration
 MailJetAPIKeyNotSet=Clé API est obligatoire
 MailJetSecretKeyNotSet=Clé secrète est obligatoire
+MAILJET_API_VERSION=Version de l'API mailjet
+MAILJET_API_VERSIONHelp=Si le SMTP fournie par MailJet est in.mailjet.com vous devez être sur l'API v1
+MailJetAPIversionNotSet=la version de l'API MailJet n'est pas configurer
 
 #
 # Substitution

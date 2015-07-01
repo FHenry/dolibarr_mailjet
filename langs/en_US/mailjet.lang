@@ -75,6 +75,10 @@ MailJetDolibarrSettings=The current mailing setting <a href="%s">Dolibarr eMail 
 MailJetDolibarrCheckSettings = Go to <a href="%s">Dolibarr eMail Setting</a> to test your configuration
 MailJetAPIKeyNotSet=API Key is required
 MailJetSecretKeyNotSet=Secret Key is required
+MAILJET_API_VERSION=MailJet API version
+MAILJET_API_VERSIONHelp=if SMTP provided by MailJet is in.mailjet.com you should be on v1
+MailJetAPIversionNotSet=MailJet API version is not configured
+
 
 #
 # Substitution
