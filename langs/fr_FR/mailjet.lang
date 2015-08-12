@@ -98,7 +98,7 @@ MailJetURLLinkedin=Lien Linkedin
 # Status
 #
 MailJetdraft=Brouillon
-MailJetprogrammed=Programé
+MailJetprogrammed=Programmé
 MailJetsent=Envoyé
 MailJetarchived=Archivé
 MailJetContactStatusqueued=En attente
@@ -109,6 +109,9 @@ MailJetContactStatusbounce=Erreur
 MailJetContactStatusblocked=Bloqués
 MailJetContactStatusspam=Spam
 MailJetContactStatusunsub=Désabonné
+MailJet0=Brouillon
+MailJet1=Programmé
+MailJet2=Envoyé
 
 #
 #MailJet Screen
@@ -136,6 +139,7 @@ MailJetStatus=Status MailJet
 MailJetSocialNetworkLink=Reseaux sociaux
 MailJetRefreshStatus=Rafraichir Dolibarr avec les statistique de MailJet
 MailJetNotActive=Le module MailJet est activé mais l'envoie des mails par MailJet est désactivé
+MailJetPermalinkMandatory=Le lien permanent est obligatoire
 #
 # Statistics
 #

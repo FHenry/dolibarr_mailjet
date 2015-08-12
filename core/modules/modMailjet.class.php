@@ -152,7 +152,7 @@ class modMailjet extends DolibarrModules
 				8=>array(
 					'MAILJET_MAIL_SMTP_SERVER',
 					'chaine',
-					'in.mailjet.com',
+					'in-v3.mailjet.com',
 					'MailJet SMTP server',
 					0,
 					'current',
@@ -220,6 +220,15 @@ class modMailjet extends DolibarrModules
 					0,
 					'current',
 					1
+				),
+				16=>array(
+						'MAILJET_API_VERSION',
+						'chaine',
+						'3',
+						'API version',
+						0,
+						'current',
+						1
 				)
 		);
 

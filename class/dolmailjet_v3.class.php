@@ -110,10 +110,10 @@ class DolMailjet extends AbstractDolMailjet {
 				'method' => 'POST',
 				'Name' => $contactlistname 
 		);
-		
+		//var_dump($contactlistname);
 		// Call
 		$response = $this->mailjet->contactslist($params);
-
+		//var_dump($response);
 		if ($response === false) {
 			$this->error = print_r($this->mailjet->_response, true);
 			dol_syslog(get_class($this) . "::createContactList " . $this->error, LOG_ERR);
@@ -149,6 +149,7 @@ class DolMailjet extends AbstractDolMailjet {
 			dol_syslog(get_class($this) . "::sendMailJetCampaign " . $this->error, LOG_ERR);
 			return - 1;
 		} else {
+			dol_syslog(get_class($this) . "::sendMailJetCampaign " . var_export($response,true), LOG_DEBUG);
 			return 1;
 		}
 	}
@@ -261,7 +262,6 @@ class DolMailjet extends AbstractDolMailjet {
 			return - 1;
 		} else {
 			$status = $response->Data[0]->Status;
-			
 			return DolMailjet::getLibStatus($status, $mode);
 		}
 	}
@@ -450,13 +450,14 @@ class DolMailjet extends AbstractDolMailjet {
 			
 			// Call
 			$response = $this->mailjet->newsletter($params);
-
 			if ($response === false) {
-				$this->error = print_r($this->mailjet->_response->errors, true);
+				$this->error = print_r($this->mailjet->_response, true);
 				dol_syslog(get_class($this) . "::createCampaign Error" . $this->error, LOG_ERR);
 				return - 1;
 			} else {
 				// Result
+				dol_syslog(get_class($this) . "::createCampaign " . var_export($response,true), LOG_DEBUG);
+				dol_syslog(get_class($this) . "::createCampaign " . var_export($response->Data[0],true), LOG_DEBUG);
 				$this->mailjet_url = $response->Data[0]->Url;
 				$this->mailjet_id = $response->Data[0]->ID;
 				return 1;
@@ -503,7 +504,7 @@ class DolMailjet extends AbstractDolMailjet {
 		$response = $this->mailjet->newsletter($params);
 		
 		if ($response === false) {
-			$this->error = print_r($this->mailjet->_response->errors, true);
+			$this->error = print_r($this->mailjet->_response, true);
 			dol_syslog(get_class($this) . "::updateCampaign Error" . $this->error, LOG_ERR);
 			return - 1;
 		} else {
@@ -624,7 +625,7 @@ class DolMailjet extends AbstractDolMailjet {
 		$response = $this->mailjet->listsRemoveManyContacts($params);
 		
 		if ($response === false) {
-			$this->error = print_r($this->mailjet->_response->errors, true);
+			$this->error = print_r($this->mailjet->_response, true);
 			dol_syslog(get_class($this) . "::updateContactList Error" . $this->error, LOG_ERR);
 			return - 1;
 		}
@@ -809,26 +810,27 @@ class DolMailjet extends AbstractDolMailjet {
 		}
 		
 		$params = array (
-				'id' => $this->mailjet_contact_list_id 
+				'contactslist' => $this->mailjet_contact_list_id,
+				'limit' => -1
 		);
 		
 		// Call
-		$response = $this->mailjet->listsContacts($params);
+		$response = $this->mailjet->contact($params);
 		if (! $response) {
 			$this->error = print_r($this->mailjet->_response, true);
 			dol_syslog(get_class($this) . "::listCampaignConcatsList " . $this->error, LOG_ERR);
 			return - 1;
 		} else {
 			if ($typeresult == 'array') {
-				return $response->result;
+				return $response->Data;
 			} else {
 				$str_return = '';
 				
-				if ($response->total_cnt > 0) {
+				if ($response->Count > 0) {
 					$i = 1;
-					foreach ( $response->result as $obj ) {
-						$str_return .= $obj->email;
-						if ($i != $response->total_cnt) {
+					foreach ( $response->Data as $obj ) {
+						$str_return .= $obj->Email;
+						if ($i != $response->Count) {
 							$str_return .= ', ';
 						}
 						if (($i % 7) == 0) {
@@ -856,8 +858,69 @@ class DolMailjet extends AbstractDolMailjet {
 			return - 1;
 		}
 		
+		//Find current campaing ID
+		$params = array (
+				'method' => 'GET',
+				'NewsLetter' => $this->mailjet_id
+		);
+		$response = $this->mailjet->campaignstatistics($params);
+		//var_dump($response);
+		if ($response === false) {
+			$this->error = print_r($this->mailjet->_response, true);
+			dol_syslog(get_class($this) . "::getCampaignStatistics " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$CampaignID=$response->Data[0]->CampaignID;
+		
+		var_dump($CampaignID);
+		
+		$params = array (
+				'method' => 'GET',
+				'NewsLetter' => $this->mailjet_id
+		);
+		var_dump($this->mailjet_id);
+		$response = $this->mailjet->campaign($params);
+		var_dump($response);
+		if ($response === false) {
+			$this->error = print_r($this->mailjet->_response, true);
+			dol_syslog(get_class($this) . "::getCampaignStatistics " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		$CampaignID=$response->Data[0]->CampaignID;
+		
+		
+		
+		$params = array (
+				//'method' => 'GET',
+				 "Campaign" => $CampaignID
+		);
+		
+		
+		$response = $this->mailjet->bouncestatistics($params);
+		var_dump($response);
+		if ($response === false) {
+			$this->error = print_r($this->mailjet->_response, true);
+			dol_syslog(get_class($this) . "::getCampaignStatistics " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		
+		$params = array (
+				//'method' => 'GET',
+				"ID" => 1443706
+		);
+		
+		
+		$response = $this->mailjet->liststatistics();
+		var_dump($response);
+		if ($response === false) {
+			$this->error = print_r($this->mailjet->_response, true);
+			dol_syslog(get_class($this) . "::getCampaignStatistics " . $this->error, LOG_ERR);
+			return - 1;
+		}
+		
+		
 		//Build contact Id
-		$mail_arr=array();
+		/*$mail_arr=array();
 		$sql = 'SELECT email FROM ' . MAIN_DB_PREFIX . 'mailing_cibles WHERE fk_mailing=' . $this->currentmailing->id;
 		dol_syslog(get_class($this) . "::addContactList sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -887,16 +950,19 @@ class DolMailjet extends AbstractDolMailjet {
 		$contact_id=array();
 		$response = $this->mailjet->contact();
 		if (! $response) {
-			$this->error = print_r($this->mailjet->_response->error, true);
+			$this->error = print_r($this->mailjet->_response, true);
 			dol_syslog(get_class($this) . "::listCampaignConcatsListStatus $this->mailjet_id error1:" . $this->error, LOG_ERR);
 			return - 1;
 		} else {
 			foreach($response->Data as $data) {
+				
 				if (in_array($data->Email,$mail_arr)) {
 					$contact_id[]=$data->ID;
 				}
 			}
 		}
+		
+		
 		
 		//Find current campaing ID
 		$params = array (
@@ -910,8 +976,13 @@ class DolMailjet extends AbstractDolMailjet {
 			return - 1;
 		}
 		$CampaignID=$response->Data[0]->CampaignID;
+		var_dump($CampaignID);
+		$params = array (
+				'CampaignID' => $CampaignID
+		);
 		
-		
+		$response = $this->mailjet->graphstatistics($params);
+		var_dump($response);
 		
 		$params = array (
 				'CampaignID' => $CampaignID,
@@ -935,12 +1006,12 @@ class DolMailjet extends AbstractDolMailjet {
 			}
 		
 		
-		
+		*/
 		
 		exit;
 		
 		if (! $response) {
-			$this->error = print_r($this->mailjet->_response->error, true);
+			$this->error = print_r($this->mailjet->_response, true);
 			dol_syslog(get_class($this) . "::listCampaignConcatsListStatus $this->mailjet_id error1:" . $this->error, LOG_ERR);
 			return - 1;
 		} else {
@@ -1014,7 +1085,8 @@ class DolMailjet extends AbstractDolMailjet {
 		
 		// Call
 		$params = array (
-				'NewsLetterID' => $this->mailjet_id
+				'method' => 'GET',
+				'NewsLetter' => $this->mailjet_id
 		);
 		
 		$response = $this->mailjet->campaignstatistics($params);
@@ -1032,8 +1104,9 @@ class DolMailjet extends AbstractDolMailjet {
 		$stats->delivered=0;
 		$stats->queued=0;
 		$stats->clicked=0;
+		$stats->bounce=0;
 		
-		if (count($response->Data)>0) {
+		if (count($response->Count)>0) {
 			foreach ($response->Data as $data) {
 					$stats->opened+=$data->OpenedCount;
 					$stats->total+=$data->ProcessedCount;
@@ -1042,8 +1115,40 @@ class DolMailjet extends AbstractDolMailjet {
 					$stats->delivered+=$data->DeliveredCount;
 					$stats->queued+=$data->QueuedCount;
 					$stats->clicked+=$data->ClickedCount;
+					$stats->bounce+=$data->BouncedCount;
 			}
 		}
+		
+		//Count destinaries
+		$sql = 'SELECT email FROM ' . MAIN_DB_PREFIX . 'mailing_cibles WHERE fk_mailing=' . $this->id;
+		dol_syslog(get_class($this) . "::getCampaignStatistics sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+		} else {
+			$this->error = $this->db->lasterror;
+			dol_syslog(get_class($this) . "::getCampaignStatistics " . $this->error, LOG_ERR);
+			return - 1;
+		}	
+
+		if (!empty($num)) {
+			$stats->delivered_rate=($stats->delivered*100)/$num;
+			$stats->opened_rate=($stats->opened*100)/$num;
+			$stats->clicked_rate=($stats->clicked*100)/$num;
+			$stats->bounce_rate=($stats->bounce*100)/$num;
+			$stats->spam_rate=($stats->spam*100)/$num;
+			$stats->blocked_rate=($stats->blocked*100)/$num;
+			$stats->failure_rate=(($stats->delivered-$num)*100)/$num;
+		} else {
+			$stats->opened_rate='N/A';
+			$stats->clicked_rate='N/A';
+			$stats->bounce_rate='N/A';
+			$stats->spam_rate='N/A';
+			$stats->blocked_rate='N/A';
+			$stats->failure_rate='N/A';
+		}
+		
+		
 		
 		return $stats;
 	}
